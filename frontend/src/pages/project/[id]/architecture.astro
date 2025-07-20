@@ -72,14 +72,14 @@ const bestDiagram = project.mermaid_diagrams[bestMermaidIndex] || project.mermai
     </aside>
     
     <!-- Main Content -->
-    <main class="flex-1 p-8 overflow-auto bg-black">
-      <div class="h-full flex flex-col">
-        <div class="mb-6">
+    <main class="flex-1 overflow-hidden">
+      <div class="w-full h-full relative bg-black">
+        <div class="absolute top-0 left-0 right-0 p-8 z-10">
           <h1 class="font-mono text-3xl mb-2">Frontend</h1>
           <p class="font-mono text-sm opacity-60">Component hierarchy and data flow</p>
         </div>
         
-        <div class="flex-1 bg-black border border-white/10 rounded overflow-hidden relative">
+        <div class="w-full h-full pt-24 relative">
           <!-- Zoom Controls -->
           <div class="absolute top-4 right-4 z-10 flex flex-col gap-2">
             <button id="zoom-in" class="px-3 py-1 bg-white/10 hover:bg-white/20 rounded font-mono text-sm">+</button>
@@ -88,7 +88,7 @@ const bestDiagram = project.mermaid_diagrams[bestMermaidIndex] || project.mermai
           </div>
           
           
-          <div class="diagram-container" style="width: 100%; height: 100%; overflow: hidden; cursor: grab;">
+          <div class="diagram-container" style="width: 100%; height: 100%; overflow: hidden; cursor: grab; background: black;">
             <div class="mermaid-container" data-mermaid={bestDiagram} style="transform-origin: center center; transition: transform 0.1s ease-out;"></div>
           </div>
         </div>
