@@ -59,6 +59,7 @@ dist/
 # Logs
 logs/
 *.log
+sitemap_generation_*.log
 
 # Testing
 .pytest_cache/

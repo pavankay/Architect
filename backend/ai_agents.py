@@ -9,93 +9,107 @@ load_dotenv()
 
 class AIAgents:
     def __init__(self):
-        self.client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+        api_key = os.getenv("ANTHROPIC_API_KEY")
+        print(f"Initializing AI Agents with API key: {api_key[:10]}...{api_key[-4:] if api_key else 'NONE'}")
+        self.client = anthropic.Anthropic(api_key=api_key)
         
     async def generate_site_maps(self, project_description: str, count: int = 1) -> List[Dict[str, Any]]:
         """Generate multiple site map options using sub-agents"""
-        tasks = []
+        print(f"\n{'='*60}")
+        print(f"GENERATING SITE MAPS")
+        print(f"Project Description: {project_description[:100]}...")
+        print(f"Count: {count}")
+        print(f"{'='*60}\n")
+        
+        results = []
         for i in range(count):
             prompt = f"""As a web architecture specialist, create a comprehensive site map for the following project:
             
 {project_description}
 
-Create an extremely detailed site map with comprehensive information for each page:
-- At least 8-12 main pages/sections
-- Multiple nested pages where appropriate
-- For EACH page include:
-  * 5-8 specific features
-  * A detailed description (2-3 sentences)
-  * Technical requirements
-  * User interactions
-  * Data requirements
-  * SEO considerations
+Create a site map with 5-8 main pages. For each page include:
+- name (string)
+- path (string) 
+- description (1-2 sentences)
+- features (array of 3-5 features)
+- children (array, can be empty)
 
-Return ONLY valid JSON with this exact structure:
+Return ONLY valid JSON, no additional text. Example structure:
 {{
   "pages": [
     {{
       "name": "Home",
       "path": "/",
-      "description": "The main landing page that introduces the product and captures visitor interest. Features dynamic content personalization based on user behavior and A/B tested conversion elements.",
-      "features": [
-        "Hero section with animated background and CTA buttons",
-        "Feature comparison grid with interactive tooltips",
-        "Customer testimonials carousel with video testimonials",
-        "Live chat integration with AI-powered responses",
-        "Newsletter signup with double opt-in process",
-        "Social proof indicators (user count, reviews)",
-        "Performance metrics dashboard preview",
-        "Multi-language support selector"
-      ],
-      "technical_requirements": [
-        "Server-side rendering for SEO",
-        "Lazy loading for images and videos",
-        "WebSocket connection for live data",
-        "CDN integration for static assets"
-      ],
-      "user_interactions": [
-        "Scroll-triggered animations",
-        "Hover effects on interactive elements",
-        "Form validation with real-time feedback",
-        "Cookie consent management"
-      ],
-      "data_requirements": [
-        "User analytics tracking",
-        "A/B test variant selection",
-        "Personalization engine integration",
-        "Real-time metrics from backend"
-      ],
-      "seo_considerations": [
-        "Meta tags optimization",
-        "Schema.org structured data",
-        "OpenGraph tags for social sharing",
-        "Sitemap.xml generation"
-      ],
+      "description": "Main landing page with product showcase.",
+      "features": ["Hero section", "Featured products", "Newsletter signup"],
       "children": []
     }}
   ]
 }}"""
-            tasks.append(self._generate_with_model(prompt))
-        
-        results = await asyncio.gather(*tasks)
+            print(f"\nGenerating sitemap {i+1} of {count}...")
+            result = await self._generate_with_model(prompt)
+            results.append(result)
         parsed_results = []
-        for r in results:
-            parsed = self._parse_json_response(r)
-            # If parsing failed or result is empty, create a default sitemap
-            if not parsed or not isinstance(parsed, dict) or 'pages' not in parsed:
-                print("Warning: Failed to parse sitemap or empty result, using fallback")
-                parsed = {
-                    "pages": [
-                        {
-                            "name": "Home",
-                            "path": "/",
-                            "description": "Main landing page",
-                            "features": ["Welcome message", "Navigation menu", "Call to action"],
-                            "children": []
-                        }
-                    ]
-                }
-            parsed_results.append(parsed)
+        
+        # Save raw results to log file
+        import datetime
+        import os
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        
+        # Create logs directory if it doesn't exist
+        log_dir = os.path.join(os.path.dirname(__file__), "logs")
+        if not os.path.exists(log_dir):
+            os.makedirs(log_dir)
+            print(f"Created logs directory: {log_dir}")
+            
+        log_file = os.path.join(log_dir, f"sitemap_generation_{timestamp}.log")
+        
+        with open(log_file, 'w') as f:
+            f.write(f"Sitemap Generation Log - {timestamp}\n")
+            f.write(f"Project Description: {project_description}\n")
+            f.write(f"{'='*80}\n\n")
+            
+            for i, r in enumerate(results):
+                print(f"\n--- Result {i+1} ---")
+                print(f"Raw response length: {len(r) if r else 0}")
+                print(f"First 200 chars: {r[:200] if r else 'EMPTY'}")
+                
+                f.write(f"Result {i+1}:\n")
+                f.write(f"Raw response: {r}\n")
+                f.write(f"{'='*80}\n\n")
+                
+                parsed = self._parse_json_response(r)
+                
+                # If parsing failed or result is empty, create a default sitemap
+                if not parsed or not isinstance(parsed, dict) or 'pages' not in parsed:
+                    print(f"WARNING: Failed to parse sitemap {i+1} or empty result, using fallback")
+                    print(f"Parsed result: {parsed}")
+                    f.write(f"PARSING FAILED - Using fallback\n")
+                    f.write(f"Parsed result: {parsed}\n\n")
+                    
+                    parsed = {
+                        "pages": [
+                            {
+                                "name": "Home",
+                                "path": "/",
+                                "description": "Main landing page",
+                                "features": ["Welcome message", "Navigation menu", "Call to action"],
+                                "children": []
+                            }
+                        ]
+                    }
+                else:
+                    print(f"SUCCESS: Parsed sitemap {i+1} with {len(parsed.get('pages', []))} pages")
+                    f.write(f"PARSING SUCCESS\n")
+                    f.write(f"Number of pages: {len(parsed.get('pages', []))}\n\n")
+                
+                parsed_results.append(parsed)
+        
+        print(f"\n{'='*60}")
+        print(f"SITEMAP GENERATION COMPLETE")
+        print(f"Log saved to: {log_file}")
+        print(f"{'='*60}\n")
+        
         return parsed_results
     
     async def generate_mermaid_diagrams(self, project_description: str, site_map: Dict, count: int = 1) -> List[str]:
@@ -186,41 +200,82 @@ Return JSON array with ratings for each artifact:
     
     async def _generate_with_model(self, prompt: str) -> str:
         """Generate response using Anthropic Claude API"""
+        print(f"\n--- AI API CALL ---")
+        print(f"Prompt length: {len(prompt)} chars")
+        print(f"Model: claude-sonnet-4-20250514")
+        
         try:
-            # Run in thread pool since anthropic client is sync
-            loop = asyncio.get_event_loop()
-            response = await loop.run_in_executor(
-                None,
-                lambda: self.client.messages.create(
-                    model="claude-sonnet-4-20250514",
-                    max_tokens=2000,
-                    temperature=0.7,
-                    messages=[{"role": "user", "content": prompt}]
-                )
+            # Make synchronous call directly
+            response = self.client.messages.create(
+                model="claude-sonnet-4-20250514",
+                max_tokens=10000,  # Increased to handle even larger JSON responses
+                temperature=0.7,
+                messages=[{"role": "user", "content": prompt}]
             )
-            result = response.content[0].text if response.content else ""
-            if not result:
-                print("Warning: Empty response from Claude API")
-            return result
+            
+            if response.content and len(response.content) > 0:
+                result = response.content[0].text
+                print(f"Response received: {len(result)} chars")
+                print(f"Response type: {type(response.content[0])}")
+                print(f"Stop reason: {response.stop_reason}")
+                
+                if response.stop_reason == "max_tokens":
+                    print("WARNING: Response was truncated due to max_tokens limit!")
+                    
+                return result
+            else:
+                print("WARNING: Empty response.content from Claude API")
+                print(f"Response object: {response}")
+                return ""
+                
         except Exception as e:
-            print(f"Error generating with model: {e}")
+            print(f"ERROR generating with model: {type(e).__name__}: {str(e)}")
+            import traceback
+            print(f"Traceback:\n{traceback.format_exc()}")
             return ""
     
     def _parse_json_response(self, response: str) -> Any:
         """Parse JSON from model response"""
+        print(f"\n--- PARSING JSON ---")
+        print(f"Response length: {len(response) if response else 0}")
+        
+        if not response:
+            print("ERROR: Empty response to parse")
+            return {}
+            
         try:
             # Clean response if needed
+            original_response = response
             response = response.strip()
+            
             if response.startswith("```json"):
+                print("Cleaning: Removing ```json prefix")
                 response = response[7:]
             if response.endswith("```"):
+                print("Cleaning: Removing ``` suffix")
                 response = response[:-3]
-            result = json.loads(response.strip())
-            print(f"Successfully parsed JSON with keys: {list(result.keys()) if isinstance(result, dict) else 'Not a dict'}")
+                
+            response = response.strip()
+            print(f"Cleaned response length: {len(response)}")
+            print(f"First 100 chars: {response[:100]}...")
+            print(f"Last 100 chars: ...{response[-100:]}")
+            
+            result = json.loads(response)
+            print(f"SUCCESS: Parsed JSON")
+            print(f"Type: {type(result)}")
+            print(f"Keys: {list(result.keys()) if isinstance(result, dict) else 'Not a dict'}")
+            
+            if isinstance(result, dict) and 'pages' in result:
+                print(f"Pages found: {len(result['pages'])}")
+                
             return result
+        except json.JSONDecodeError as e:
+            print(f"ERROR parsing JSON: {e}")
+            print(f"Error position: {e.pos if hasattr(e, 'pos') else 'Unknown'}")
+            print(f"Raw response first 500 chars: {response[:500]}...")
+            return {}
         except Exception as e:
-            print(f"Error parsing JSON response: {e}")
-            print(f"Raw response: {response[:500]}...")
+            print(f"ERROR parsing JSON (other): {type(e).__name__}: {str(e)}")
             return {}
     
     def _clean_mermaid_diagram(self, diagram: str) -> str:

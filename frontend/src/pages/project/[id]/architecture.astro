@@ -28,7 +28,7 @@ const bestMermaidIndex = getBestRated(project.ratings?.mermaid_diagrams || []);
 const bestDiagram = project.mermaid_diagrams[bestMermaidIndex] || project.mermaid_diagrams[0];
 ---
 
-<Layout title={`Architecture - ${project.name}`}>
+<Layout title={`Frontend - ${project.name}`}>
   <div class="flex h-screen">
     <!-- Sidebar -->
     <aside class="w-64 bg-black border-r border-white/10 p-6 flex flex-col">
@@ -49,7 +49,7 @@ const bestDiagram = project.mermaid_diagrams[bestMermaidIndex] || project.mermai
           Site Map
         </a>
         <a href={`/project/${id}/architecture`} class="block px-4 py-2 font-mono text-sm bg-white/10 rounded">
-          Architecture
+          Frontend
         </a>
         <a href={`/project/${id}/backend`} class="block px-4 py-2 font-mono text-sm hover:bg-white/5 rounded transition-colors">
           Backend
@@ -75,7 +75,7 @@ const bestDiagram = project.mermaid_diagrams[bestMermaidIndex] || project.mermai
     <main class="flex-1 p-8 overflow-auto bg-black">
       <div class="h-full flex flex-col">
         <div class="mb-6">
-          <h1 class="font-mono text-3xl mb-2">Frontend Architecture</h1>
+          <h1 class="font-mono text-3xl mb-2">Frontend</h1>
           <p class="font-mono text-sm opacity-60">Component hierarchy and data flow</p>
         </div>
         
