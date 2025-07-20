@@ -1,0 +1,61 @@
+---
+import { Image } from 'astro:assets';
+import Layout from '../layouts/Layout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import CreateProjectModal from '../components/CreateProjectModal.astro';
+import logo from '../assets/sitebuilder.png';
+
+// Fetch projects from API
+let projects = [];
+try {
+  const response = await fetch('http://localhost:5000/projects');
+  projects = response.ok ? await response.json() : [];
+} catch (error) {
+  console.error('Failed to fetch projects:', error);
+  projects = [];
+}
+---
+
+<Layout title="Architect - AI Site Planning">
+  <main class="min-h-screen p-8">
+    <header class="max-w-6xl mx-auto mb-12">
+      <div class="flex items-center gap-3 mb-3">
+        <Image src={logo} alt="Architect Logo" class="h-12 w-12 object-contain" width={48} height={48} />
+        <h1 class="font-mono text-3xl">Architect</h1>
+      </div>
+      <p class="font-mono text-sm opacity-80">AI-powered site planning and architecture tool</p>
+    </header>
+
+    <section class="max-w-6xl mx-auto">
+      <div class="flex justify-between items-center mb-8">
+        <h2 class="font-mono text-2xl">Projects</h2>
+        <button
+          id="create-project-btn"
+          class="bg-white text-black px-6 py-3 font-mono hover:bg-opacity-90 transition-opacity"
+        >
+          + Create Project
+        </button>
+      </div>
+
+      {projects.length > 0 ? (
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {projects.map((project: any) => (
+            <ProjectCard
+              id={project.id}
+              name={project.name}
+              description={project.description}
+              createdAt={project.created_at}
+            />
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-16">
+          <p class="font-mono text-lg mb-4">No projects yet</p>
+          <p class="font-mono text-sm opacity-60">Create your first project to get started</p>
+        </div>
+      )}
+    </section>
+  </main>
+
+  <CreateProjectModal />
+</Layout>

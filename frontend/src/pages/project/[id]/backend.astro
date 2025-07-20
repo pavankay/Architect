@@ -1,0 +1,245 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+
+const { id } = Astro.params;
+
+// Fetch project details
+let project = null;
+try {
+  const response = await fetch(`http://localhost:5000/projects/${id}`);
+  project = response.ok ? await response.json() : null;
+} catch (error) {
+  console.error('Failed to fetch project:', error);
+}
+
+if (!project) {
+  return Astro.redirect('/');
+}
+
+// Get the best rated diagram
+const getBestRated = (ratings: any[]) => {
+  if (!ratings || ratings.length === 0) return 0;
+  return ratings.reduce((best, current) => 
+    current.overall_score > (best.overall_score || 0) ? current : best
+  , {}).index || 0;
+};
+
+const bestBackendIndex = getBestRated(project.ratings?.backend_diagrams || []);
+const bestDiagram = project.backend_diagrams[bestBackendIndex] || project.backend_diagrams[0];
+---
+
+<Layout title={`Backend - ${project.name}`}>
+  <div class="flex h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-black border-r border-white/10 p-6 flex flex-col">
+      <a href="/" class="flex items-center gap-2 mb-8 hover:opacity-80 transition-opacity">
+        <img src="/sitebuilder.png" alt="Architect Logo" class="h-8 w-8 object-contain" />
+        <span class="font-mono text-sm">Architect</span>
+      </a>
+      
+      <div class="mb-8">
+        <h2 class="font-mono text-lg">{project.name}</h2>
+      </div>
+      
+      <nav class="space-y-2 flex-1">
+        <a href={`/project/${id}`} class="block px-4 py-2 font-mono text-sm hover:bg-white/5 rounded transition-colors">
+          Overview
+        </a>
+        <a href={`/project/${id}/sitemap`} class="block px-4 py-2 font-mono text-sm hover:bg-white/5 rounded transition-colors">
+          Site Map
+        </a>
+        <a href={`/project/${id}/architecture`} class="block px-4 py-2 font-mono text-sm hover:bg-white/5 rounded transition-colors">
+          Architecture
+        </a>
+        <a href={`/project/${id}/backend`} class="block px-4 py-2 font-mono text-sm bg-white/10 rounded">
+          Backend
+        </a>
+      </nav>
+      
+      <div class="mt-auto pt-8 space-y-4">
+        <button 
+          id="delete-project-btn"
+          data-project-id={id}
+          class="w-full px-4 py-2 font-mono text-sm bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded transition-colors"
+        >
+          Delete Project
+        </button>
+        
+        <div class="border-t border-white/10 pt-4">
+          <p class="font-mono text-xs opacity-60">Created</p>
+          <p class="font-mono text-xs">{new Date(project.created_at).toLocaleDateString()}</p>
+        </div>
+      </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="flex-1 p-8 overflow-auto bg-black">
+      <div class="h-full flex flex-col">
+        <div class="mb-6">
+          <h1 class="font-mono text-3xl mb-2">Backend Architecture</h1>
+          <p class="font-mono text-sm opacity-60">API design and database schema</p>
+        </div>
+        
+        <div class="flex-1 bg-black border border-white/10 rounded overflow-hidden relative">
+          <!-- Zoom Controls -->
+          <div class="absolute top-4 right-4 z-10 flex flex-col gap-2">
+            <button id="zoom-in" class="px-3 py-1 bg-white/10 hover:bg-white/20 rounded font-mono text-sm">+</button>
+            <button id="zoom-out" class="px-3 py-1 bg-white/10 hover:bg-white/20 rounded font-mono text-sm">-</button>
+            <button id="zoom-reset" class="px-3 py-1 bg-white/10 hover:bg-white/20 rounded font-mono text-sm">Reset</button>
+          </div>
+          
+          <div class="diagram-container" style="width: 100%; height: 100%; overflow: hidden; cursor: grab;">
+            <div class="mermaid-container" data-mermaid={bestDiagram} style="transform-origin: center center; transition: transform 0.1s ease-out;"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</Layout>
+
+<script>
+  // Delete project functionality
+  document.addEventListener('DOMContentLoaded', () => {
+    const deleteBtn = document.getElementById('delete-project-btn');
+    
+    deleteBtn?.addEventListener('click', async (e) => {
+      const projectId = (e.target as HTMLElement).dataset.projectId;
+      
+      if (confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
+        try {
+          const response = await fetch(`http://localhost:5000/projects/${projectId}`, {
+            method: 'DELETE',
+          });
+          
+          if (response.ok) {
+            window.location.href = '/';
+          } else {
+            console.error('Failed to delete project');
+            alert('Failed to delete project. Please try again.');
+          }
+        } catch (error) {
+          console.error('Error deleting project:', error);
+          alert('Error deleting project. Please try again.');
+        }
+      }
+    });
+  });
+</script>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  
+  // Initialize Mermaid
+  mermaid.initialize({ 
+    startOnLoad: false,
+    theme: 'dark',
+    themeVariables: {
+      primaryColor: '#1a1a1a',
+      primaryTextColor: '#FFFFFF',
+      primaryBorderColor: '#FFFFFF',
+      lineColor: '#FFFFFF',
+      secondaryColor: '#2a2a2a',
+      tertiaryColor: '#3a3a3a',
+      background: '#000000',
+      mainBkg: '#000000',
+      secondBkg: '#1a1a1a',
+      tertiaryBkg: '#2a2a2a',
+      secondaryBorderColor: '#FFFFFF',
+      tertiaryBorderColor: '#FFFFFF',
+      secondaryTextColor: '#FFFFFF',
+      tertiaryTextColor: '#FFFFFF',
+      textColor: '#FFFFFF',
+      mainContrastColor: '#FFFFFF',
+      darkMode: true,
+      fontFamily: 'TG Frekuent Mono, monospace'
+    }
+  });
+
+  // Render Mermaid diagram immediately after initialization
+  const container = document.querySelector('.mermaid-container');
+  if (container) {
+    const mermaidCode = container.getAttribute('data-mermaid');
+    if (mermaidCode) {
+      try {
+        const { svg } = await mermaid.render('mermaid-diagram', mermaidCode);
+        container.innerHTML = svg;
+        
+        // Initialize zoom and pan
+        initializeZoomPan();
+      } catch (error) {
+        console.error('Error rendering Mermaid diagram:', error);
+        container.innerHTML = '<pre class="font-mono text-xs">' + mermaidCode + '</pre>';
+      }
+    }
+  }
+  
+  function initializeZoomPan() {
+    const diagramContainer = document.querySelector('.diagram-container');
+    const mermaidContainer = document.querySelector('.mermaid-container');
+    
+    let zoom = 1;
+    let panX = 0;
+    let panY = 0;
+    let isPanning = false;
+    let startX = 0;
+    let startY = 0;
+    
+    function updateTransform() {
+      mermaidContainer.style.transform = `translate(${panX}px, ${panY}px) scale(${zoom})`;
+    }
+    
+    // Zoom controls
+    document.getElementById('zoom-in').addEventListener('click', () => {
+      zoom = Math.min(zoom * 1.2, 5);
+      updateTransform();
+    });
+    
+    document.getElementById('zoom-out').addEventListener('click', () => {
+      zoom = Math.max(zoom / 1.2, 0.2);
+      updateTransform();
+    });
+    
+    document.getElementById('zoom-reset').addEventListener('click', () => {
+      zoom = 1;
+      panX = 0;
+      panY = 0;
+      updateTransform();
+    });
+    
+    // Mouse wheel zoom
+    diagramContainer.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? 0.9 : 1.1;
+      zoom = Math.min(Math.max(zoom * delta, 0.2), 5);
+      updateTransform();
+    });
+    
+    // Pan functionality
+    diagramContainer.addEventListener('mousedown', (e) => {
+      isPanning = true;
+      startX = e.clientX - panX;
+      startY = e.clientY - panY;
+      diagramContainer.style.cursor = 'grabbing';
+    });
+    
+    window.addEventListener('mousemove', (e) => {
+      if (!isPanning) return;
+      panX = e.clientX - startX;
+      panY = e.clientY - startY;
+      updateTransform();
+    });
+    
+    window.addEventListener('mouseup', () => {
+      isPanning = false;
+      diagramContainer.style.cursor = 'grab';
+    });
+    
+    // Double-click to reset
+    diagramContainer.addEventListener('dblclick', () => {
+      zoom = 1;
+      panX = 0;
+      panY = 0;
+      updateTransform();
+    });
+  }
+</script>

@@ -1,0 +1,328 @@
+---
+---
+
+<div id="create-modal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <h2 class="font-mono text-2xl mb-6">Create New Project</h2>
+    
+    <form id="create-form" class="space-y-6 flex-1 overflow-y-auto">
+      <div>
+        <label for="name" class="font-mono text-sm block mb-2">Project Name</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          required
+          class="w-full p-3 border-b border-white/20 bg-transparent text-white font-mono focus:outline-none focus:border-white transition-colors"
+          placeholder="My Awesome Site"
+        />
+      </div>
+      
+      <div>
+        <label for="description" class="font-mono text-sm block mb-2">
+          Detailed Project Description
+          <span class="text-xs opacity-60 ml-2">(Be specific for better results)</span>
+        </label>
+        <textarea
+          id="description"
+          name="description"
+          required
+          rows="8"
+          class="w-full p-3 border-b border-white/20 bg-transparent text-white font-mono focus:outline-none focus:border-white transition-colors resize-none"
+          placeholder="Provide a comprehensive description of your project:
+
+• What type of website/app is this? (e.g., e-commerce, blog, SaaS, portfolio)
+• Who is your target audience?
+• What are the main features and functionality?
+• What problems does it solve?
+• Any specific technical requirements?
+• Design preferences or examples?
+
+The more detail you provide, the better the AI can plan your architecture."
+        ></textarea>
+      </div>
+      
+      <div class="grid grid-cols-2 gap-6">
+        <div>
+          <h3 class="font-mono text-sm mb-3 text-white">What we'll create:</h3>
+          <ul class="space-y-2 font-mono text-xs opacity-80">
+            <li>• Interactive site map</li>
+            <li>• Frontend architecture</li>
+            <li>• Backend design</li>
+            <li>• Component hierarchy</li>
+            <li>• API structure</li>
+          </ul>
+        </div>
+        
+        <div>
+          <h3 class="font-mono text-sm mb-3 text-white">AI Process:</h3>
+          <ul class="space-y-2 font-mono text-xs opacity-80">
+            <li>• Analyze requirements</li>
+            <li>• Plan site structure</li>
+            <li>• Design architecture</li>
+            <li>• Create diagrams</li>
+            <li>• Optimize design</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="flex gap-4 mt-6">
+        <button
+          type="submit"
+          class="flex-1 bg-white text-black py-3 font-mono hover:bg-opacity-90 transition-opacity"
+        >
+          Create
+        </button>
+        <button
+          type="button"
+          id="cancel-btn"
+          class="flex-1 border border-white py-3 font-mono hover:bg-white hover:text-black transition-all"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+    
+    <div id="loading-state" class="hidden flex flex-col h-full">
+      <div class="space-y-3 mb-6">
+        <div class="step-item" data-step="1">
+          <div class="flex items-center gap-3">
+            <div class="spinner"></div>
+            <svg class="checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 6L9 17l-5-5"/>
+            </svg>
+            <span class="font-mono text-xs">Planning site structure...</span>
+          </div>
+        </div>
+        <div class="step-item" data-step="2">
+          <div class="flex items-center gap-3">
+            <div class="spinner"></div>
+            <svg class="checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 6L9 17l-5-5"/>
+            </svg>
+            <span class="font-mono text-xs">Creating site maps...</span>
+          </div>
+        </div>
+        <div class="step-item" data-step="3">
+          <div class="flex items-center gap-3">
+            <div class="spinner"></div>
+            <svg class="checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 6L9 17l-5-5"/>
+            </svg>
+            <span class="font-mono text-xs">Designing architecture diagrams...</span>
+          </div>
+        </div>
+        <div class="step-item" data-step="4">
+          <div class="flex items-center gap-3">
+            <div class="spinner"></div>
+            <svg class="checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 6L9 17l-5-5"/>
+            </svg>
+            <span class="font-mono text-xs">Finalizing project structure...</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="flex-1 overflow-hidden">
+        <div class="border border-white/10 rounded p-4 h-full overflow-y-auto">
+          <h4 class="font-mono text-xs text-white/60 mb-3">AI Progress</h4>
+          <div id="ai-callbacks" class="space-y-2 font-mono text-xs text-white/80">
+            <!-- AI messages will be dynamically added here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  .modal-content {
+    background-color: #000000;
+    padding: 3rem;
+    max-width: 800px;
+    width: 90%;
+    height: 80vh;
+    max-height: 600px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--color-white);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  .step-item {
+    opacity: 0.3;
+    transition: opacity 0.3s ease;
+  }
+
+  .step-item.active {
+    opacity: 1;
+  }
+  
+  .step-item.completed {
+    opacity: 1;
+  }
+  
+  .step-item.completed .spinner {
+    display: none;
+  }
+  
+  .step-item .checkmark {
+    display: none;
+    width: 16px;
+    height: 16px;
+    color: #ffffff;
+  }
+  
+  .step-item.completed .checkmark {
+    display: block;
+  }
+</style>
+
+<script>
+  const modal = document.getElementById('create-modal');
+  const form = document.getElementById('create-form') as HTMLFormElement;
+  const loadingState = document.getElementById('loading-state');
+  const cancelBtn = document.getElementById('cancel-btn');
+  
+  // Show modal when create button is clicked
+  document.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).id === 'create-project-btn') {
+      modal!.style.display = 'flex';
+    }
+  });
+  
+  // Hide modal
+  cancelBtn?.addEventListener('click', () => {
+    modal!.style.display = 'none';
+  });
+  
+  // Handle form submission
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData(form);
+    const data = {
+      name: formData.get('name'),
+      description: formData.get('description')
+    };
+    
+    // Show loading state
+    form.classList.add('hidden');
+    loadingState?.classList.remove('hidden');
+    
+    // AI callback messages
+    const aiCallbacks = document.getElementById('ai-callbacks');
+    const messages = [
+      "Analyzing project requirements...",
+      "Identifying key user personas and use cases...",
+      "Mapping out core features and functionality...",
+      "Determining technical stack requirements...",
+      "Creating page hierarchy and navigation flow...",
+      "Designing component architecture...",
+      "Planning API endpoints and data models...",
+      "Optimizing for SEO and performance...",
+      "Configuring authentication and security layers...",
+      "Setting up state management patterns...",
+      "Defining responsive breakpoints...",
+      "Planning progressive enhancement strategy...",
+      "Creating accessibility guidelines...",
+      "Finalizing project structure..."
+    ];
+    
+    let messageIndex = 0;
+    const messageInterval = setInterval(() => {
+      if (messageIndex < messages.length && aiCallbacks) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'opacity-0 transition-opacity duration-500';
+        messageDiv.textContent = `> ${messages[messageIndex]}`;
+        aiCallbacks.appendChild(messageDiv);
+        
+        // Fade in effect
+        setTimeout(() => {
+          messageDiv.classList.remove('opacity-0');
+        }, 50);
+        
+        // Auto scroll to bottom
+        aiCallbacks.scrollTop = aiCallbacks.scrollHeight;
+        messageIndex++;
+      }
+    }, 500);
+    
+    // Animate steps with longer delays
+    const steps = loadingState?.querySelectorAll('.step-item');
+    steps?.forEach((step, index) => {
+      setTimeout(() => {
+        step.classList.add('active');
+        // Mark previous step as completed
+        if (index > 0) {
+          steps[index - 1].classList.add('completed');
+          steps[index - 1].classList.remove('active');
+        }
+        // Mark last step as completed after a delay
+        if (index === steps.length - 1) {
+          setTimeout(() => {
+            step.classList.add('completed');
+            step.classList.remove('active');
+            clearInterval(messageInterval);
+            
+            // Add final message
+            if (aiCallbacks) {
+              const finalMsg = document.createElement('div');
+              finalMsg.className = 'text-white font-bold mt-2';
+              finalMsg.textContent = '> Project structure complete!';
+              aiCallbacks.appendChild(finalMsg);
+            }
+          }, 2000);
+        }
+      }, index * 2000);
+    });
+    
+    try {
+      const response = await fetch('http://localhost:5000/projects', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+      
+      if (response.ok) {
+        const project = await response.json();
+        // Immediate redirect
+        window.location.href = `/project/${project.id}`;
+      } else {
+        console.error('Failed to create project');
+        // Reset form
+        form.classList.remove('hidden');
+        loadingState?.classList.add('hidden');
+      }
+    } catch (error) {
+      console.error('Error creating project:', error);
+      // Reset form
+      form.classList.remove('hidden');
+      loadingState?.classList.add('hidden');
+    }
+  });
+</script>
