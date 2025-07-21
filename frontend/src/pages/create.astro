@@ -1,0 +1,330 @@
+---
+import { Image } from 'astro:assets';
+import Layout from '../layouts/Layout.astro';
+import logo from '../assets/sitebuilder.png';
+---
+
+<Layout title="Create Project - Architect">
+  <main class="min-h-screen p-8 bg-pattern-dots">
+    <header class="max-w-6xl mx-auto mb-16 animate-fade-in">
+      <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center gap-6">
+          <Image src={logo} alt="Architect Logo" class="w-16 h-16 rounded-2xl" />
+          <div>
+            <h1 class="font-mono text-4xl mb-2">Architect</h1>
+            <p class="font-mono text-sm opacity-60">AI-powered site planning and architecture tool for modern developers</p>
+          </div>
+        </div>
+        <a href="/" class="text-white/60 hover:text-white font-mono text-sm transition-colors">
+          ← Back to Projects
+        </a>
+      </div>
+    </header>
+
+    <div class="max-w-4xl mx-auto animate-fade-in animate-delay-200">
+      <div class="mb-12">
+        <h2 class="font-mono text-4xl mb-4">Create New Project</h2>
+        <p class="font-mono text-lg opacity-60">Let AI help you architect the perfect solution</p>
+      </div>
+
+      <!-- Form Container -->
+      <div class="bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-3xl p-8 backdrop-blur-sm">
+        <form id="create-form" class="space-y-8">
+          <!-- Project Name -->
+          <div class="form-group">
+            <label for="name" class="block font-mono text-sm mb-3 text-[var(--text-primary)]">Project Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              required
+              class="w-full px-6 py-4 bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-xl font-mono text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:border-[var(--border-primary)] focus:outline-none transition-colors"
+              placeholder="My Awesome Site"
+            />
+          </div>
+          
+          <!-- Project Description -->
+          <div class="form-group">
+            <label for="description" class="block font-mono text-sm mb-3 text-[var(--text-primary)]">
+              Detailed Project Description
+              <span class="text-[var(--text-secondary)] text-xs ml-2">(Be specific for better results)</span>
+            </label>
+            <textarea
+              id="description"
+              name="description"
+              required
+              rows="20"
+              class="w-full px-6 py-4 bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-xl font-mono text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:border-[var(--border-primary)] focus:outline-none transition-colors resize-y min-h-[400px] leading-relaxed"
+              placeholder="Provide a comprehensive description of your project:
+
+• What type of website/app is this? (e.g., e-commerce, blog, SaaS, portfolio)
+• Who is your target audience?
+• What are the main features and functionality?
+• What problems does it solve?
+• Any specific technical requirements?
+• Design preferences or examples?
+• Preferred tech stack or frameworks?
+• Any integrations needed (payment, auth, APIs)?
+• Performance requirements?
+• Scalability considerations?
+
+The more detail you provide, the better the AI can plan your architecture.
+
+Examples:
+- 'A modern e-commerce platform for selling handmade crafts, targeting small businesses. Need user authentication, payment processing, inventory management, and mobile-responsive design.'
+- 'A portfolio website for a photographer with gallery features, contact forms, blog section, and fast loading times for high-resolution images.'
+- 'A SaaS dashboard for project management with real-time collaboration, file sharing, task tracking, and integration with popular tools like Slack and GitHub.'"
+            ></textarea>
+          </div>
+          
+          <!-- Action Buttons -->
+          <div class="flex gap-4 pt-4">
+            <button
+              type="submit"
+              class="flex-1 bg-[var(--color-white)] text-[var(--color-black)] py-4 px-8 font-mono font-medium rounded-xl hover:opacity-90 transition-opacity"
+            >
+              Create Project
+            </button>
+            <a
+              href="/"
+              class="flex-1 border border-[var(--border-primary)] py-4 px-8 font-mono text-center rounded-xl hover:border-[var(--text-primary)] transition-colors"
+            >
+              Cancel
+            </a>
+          </div>
+        </form>
+
+        <!-- Loading State -->
+        <div id="loading-state" class="hidden space-y-8">
+          <div class="space-y-4">
+            <div class="step-item" data-step="1">
+              <div class="flex items-center gap-3">
+                <div class="step-icon">
+                  <div class="spinner"></div>
+                  <div class="checkmark">●</div>
+                </div>
+                <span class="font-mono text-sm">Planning site structure...</span>
+              </div>
+            </div>
+            <div class="step-item" data-step="2">
+              <div class="flex items-center gap-3">
+                <div class="step-icon">
+                  <div class="spinner"></div>
+                  <div class="checkmark">●</div>
+                </div>
+                <span class="font-mono text-sm">Creating site maps...</span>
+              </div>
+            </div>
+            <div class="step-item" data-step="3">
+              <div class="flex items-center gap-3">
+                <div class="step-icon">
+                  <div class="spinner"></div>
+                  <div class="checkmark">●</div>
+                </div>
+                <span class="font-mono text-sm">Designing architecture diagrams...</span>
+              </div>
+            </div>
+            <div class="step-item" data-step="4">
+              <div class="flex items-center gap-3">
+                <div class="step-icon">
+                  <div class="spinner"></div>
+                  <div class="checkmark">●</div>
+                </div>
+                <span class="font-mono text-sm">Finalizing project structure...</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="border border-white/10 rounded-xl p-6 h-80 overflow-y-auto bg-white/[0.02]">
+            <h4 class="font-mono text-sm text-white/60 mb-4">AI Progress</h4>
+            <div id="ai-callbacks" class="space-y-2 font-mono text-sm text-white/80">
+              <!-- AI messages will be dynamically added here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .step-icon {
+    position: relative;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--color-white);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .step-item {
+    opacity: 0.3;
+    transition: opacity 0.3s ease;
+  }
+
+  .step-item.active {
+    opacity: 1;
+  }
+  
+  .step-item.completed {
+    opacity: 1;
+  }
+  
+  .step-item.completed .spinner {
+    display: none;
+  }
+  
+  .step-item .checkmark {
+    color: transparent;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  
+  .step-item.completed .checkmark {
+    color: transparent;
+  }
+  
+  .step-item.completed .checkmark::before {
+    content: '';
+    width: 12px;
+    height: 12px;
+    background-color: #22c55e;
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+    position: absolute;
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+</style>
+
+<script>
+  const form = document.getElementById('create-form') as HTMLFormElement;
+  const loadingState = document.getElementById('loading-state');
+  
+  // Handle form submission
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData(form);
+    const data = {
+      name: formData.get('name'),
+      description: formData.get('description')
+    };
+    
+    // Show loading state
+    form.style.display = 'none';
+    loadingState?.classList.remove('hidden');
+    
+    // AI callback messages
+    const aiCallbacks = document.getElementById('ai-callbacks');
+    const messages = [
+      "Analyzing project requirements...",
+      "Identifying key user personas and use cases...",
+      "Mapping out core features and functionality...",
+      "Determining technical stack requirements...",
+      "Creating page hierarchy and navigation flow...",
+      "Designing component architecture...",
+      "Planning API endpoints and data models...",
+      "Optimizing for SEO and performance...",
+      "Configuring authentication and security layers...",
+      "Setting up state management patterns...",
+      "Defining responsive breakpoints...",
+      "Planning progressive enhancement strategy...",
+      "Creating accessibility guidelines...",
+      "Finalizing project structure..."
+    ];
+    
+    let messageIndex = 0;
+    const messageInterval = setInterval(() => {
+      if (messageIndex < messages.length && aiCallbacks) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'opacity-0 transition-opacity duration-500';
+        messageDiv.textContent = `> ${messages[messageIndex]}`;
+        aiCallbacks.appendChild(messageDiv);
+        
+        // Fade in effect
+        setTimeout(() => {
+          messageDiv.classList.remove('opacity-0');
+        }, 50);
+        
+        // Auto scroll to bottom
+        aiCallbacks.scrollTop = aiCallbacks.scrollHeight;
+        messageIndex++;
+      }
+    }, 500);
+    
+    // Animate steps with longer delays
+    const steps = loadingState?.querySelectorAll('.step-item');
+    steps?.forEach((step, index) => {
+      setTimeout(() => {
+        step.classList.add('active');
+        // Mark previous step as completed
+        if (index > 0) {
+          steps[index - 1].classList.add('completed');
+          steps[index - 1].classList.remove('active');
+        }
+        // Mark last step as completed after a delay
+        if (index === steps.length - 1) {
+          setTimeout(() => {
+            step.classList.add('completed');
+            step.classList.remove('active');
+            clearInterval(messageInterval);
+            
+            // Add final message
+            if (aiCallbacks) {
+              const finalMsg = document.createElement('div');
+              finalMsg.className = 'text-white font-bold mt-2';
+              finalMsg.textContent = '> Project structure complete!';
+              aiCallbacks.appendChild(finalMsg);
+            }
+          }, 2000);
+        }
+      }, index * 2000);
+    });
+    
+    try {
+      const response = await fetch('http://localhost:5000/projects', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+      
+      if (response.ok) {
+        const project = await response.json();
+        // Immediate redirect
+        window.location.href = `/project/${project.id}`;
+      } else {
+        console.error('Failed to create project');
+        // Reset form
+        form.style.display = 'block';
+        loadingState?.classList.add('hidden');
+      }
+    } catch (error) {
+      console.error('Error creating project:', error);
+      // Reset form
+      form.style.display = 'block';
+      loadingState?.classList.add('hidden');
+    }
+  });
+</script>

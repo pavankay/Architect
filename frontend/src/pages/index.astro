@@ -2,7 +2,6 @@
 import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
 import ProjectCard from '../components/ProjectCard.astro';
-import CreateProjectModal from '../components/CreateProjectModal.astro';
 import logo from '../assets/sitebuilder.png';
 
 // Fetch projects from API
@@ -32,12 +31,12 @@ try {
           <h2 class="font-mono text-3xl mb-2">Projects</h2>
           <p class="font-mono text-sm opacity-60">Manage and explore your architectural designs</p>
         </div>
-        <button
-          id="create-project-btn"
-          class="bg-white text-black px-8 py-4 font-mono transition-opacity rounded-lg"
+        <a
+          href="/create"
+          class="bg-[var(--color-white)] text-[var(--color-black)] px-8 py-4 font-mono transition-opacity rounded-lg inline-block hover:opacity-90"
         >
           <span class="text-lg">+</span> Create Project
-        </button>
+        </a>
       </div>
 
       {projects.length > 0 ? (
@@ -73,5 +72,41 @@ try {
     </section>
   </main>
 
-  <CreateProjectModal />
 </Layout>
+
+<script>
+  // Press "1" to delete all projects
+  document.addEventListener('keydown', async (e) => {
+    if (e.key === '1') {
+      e.preventDefault();
+      
+      // Show confirmation dialog
+      const confirmDelete = confirm(
+        "Are you sure you want to delete ALL projects?\n\nThis action cannot be undone and will permanently remove all projects and their data."
+      );
+      
+      if (!confirmDelete) {
+        return;
+      }
+      
+      try {
+        const response = await fetch('http://localhost:5000/projects', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        if (response.ok) {
+          // Reload the page to show updated project list
+          window.location.reload();
+        } else {
+          alert('Failed to delete projects. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error deleting projects:', error);
+        alert('An error occurred while deleting projects. Please try again.');
+      }
+    }
+  });
+</script>

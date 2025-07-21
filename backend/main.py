@@ -132,6 +132,17 @@ async def create_project(project: ProjectCreate, db: Session = Depends(get_db)):
         db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.delete("/projects")
+async def delete_all_projects(db: Session = Depends(get_db)):
+    try:
+        # Delete all projects
+        deleted_count = db.query(Project).delete()
+        db.commit()
+        return {"message": f"Successfully deleted {deleted_count} projects"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.delete("/projects/{project_id}")
 async def delete_project(project_id: str, db: Session = Depends(get_db)):
     project = db.query(Project).filter(Project.id == project_id).first()
