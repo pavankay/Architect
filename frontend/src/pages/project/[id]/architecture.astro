@@ -57,7 +57,7 @@ const bestDiagram = project.mermaid_diagrams[bestMermaidIndex] || project.mermai
         </a>
       </nav>
       
-      <div class="mt-auto pt-8 space-y-4">
+      <div class="mt-auto pt-12 space-y-4">
         <button 
           id="project-details-btn"
           class="w-full px-4 py-2 font-mono text-sm bg-white/10 transition-colors rounded-lg"
@@ -89,8 +89,8 @@ const bestDiagram = project.mermaid_diagrams[bestMermaidIndex] || project.mermai
           </div>
           
           
-          <div class="diagram-container" style="width: 100%; height: 100%; overflow: hidden; cursor: grab; background: black;">
-            <div class="mermaid-container" data-mermaid={bestDiagram} style="transform-origin: center center; transition: transform 0.1s ease-out;"></div>
+          <div class="diagram-container" style="width: 100%; height: 100%; overflow: auto; cursor: grab; background: black;">
+            <div class="mermaid-container" data-mermaid={bestDiagram} style="transform-origin: center center; transition: transform 0.1s ease-out; padding: 60px; width: max-content; min-width: calc(100% - 120px);"></div>
           </div>
         </div>
       </div>
@@ -248,6 +248,24 @@ const bestDiagram = project.mermaid_diagrams[bestMermaidIndex] || project.mermai
         const { svg } = await mermaid.render('mermaid-diagram', mermaidCode);
         container.innerHTML = svg;
         
+        // Get the SVG element and fix the cutoff issue
+        const svgElement = container.querySelector('svg');
+        if (svgElement) {
+          // Remove restrictive viewBox and sizing to show full diagram
+          svgElement.removeAttribute('viewBox');
+          svgElement.style.maxWidth = 'none';
+          svgElement.style.maxHeight = 'none';
+          svgElement.style.width = 'auto';
+          svgElement.style.height = 'auto';
+          svgElement.style.overflow = 'visible';
+          
+          // Ensure all child elements are visible
+          const allElements = svgElement.querySelectorAll('*');
+          allElements.forEach(el => {
+            el.style.overflow = 'visible';
+          });
+        }
+        
         // Initialize zoom and pan
         initializeZoomPan();
       } catch (error) {
@@ -260,6 +278,28 @@ const bestDiagram = project.mermaid_diagrams[bestMermaidIndex] || project.mermai
   function initializeZoomPan() {
     const diagramContainer = document.querySelector('.diagram-container');
     const mermaidContainer = document.querySelector('.mermaid-container');
+    const svgElement = mermaidContainer.querySelector('svg');
+    
+    if (!svgElement) return;
+    
+    // Wait for the SVG to be fully rendered before calculating dimensions
+    setTimeout(() => {
+      // Calculate initial scale to fit the diagram
+      const containerRect = diagramContainer.getBoundingClientRect();
+      const svgRect = svgElement.getBoundingClientRect();
+      
+      if (svgRect.width > 0 && svgRect.height > 0) {
+        // Calculate scale to fit with some padding
+        const scaleX = (containerRect.width * 0.85) / svgRect.width;
+        const scaleY = (containerRect.height * 0.85) / svgRect.height;
+        const calculatedScale = Math.min(scaleX, scaleY, 1); // Don't scale up, only down
+        
+        if (calculatedScale < 1) {
+          zoom = calculatedScale;
+          updateTransform();
+        }
+      }
+    }, 100);
     
     let zoom = 1;
     let panX = 0;
@@ -272,15 +312,35 @@ const bestDiagram = project.mermaid_diagrams[bestMermaidIndex] || project.mermai
       mermaidContainer.style.transform = `translate(${panX}px, ${panY}px) scale(${zoom})`;
     }
     
+    // Apply initial transform
+    updateTransform();
+    
+    // Center-based zoom function
+    function zoomToCenter(newZoom) {
+      const containerRect = diagramContainer.getBoundingClientRect();
+      const centerX = containerRect.width / 2;
+      const centerY = containerRect.height / 2;
+      
+      // Calculate the zoom change
+      const zoomRatio = newZoom / zoom;
+      
+      // Adjust pan to keep center point fixed
+      panX = centerX - (centerX - panX) * zoomRatio;
+      panY = centerY - (centerY - panY) * zoomRatio;
+      
+      zoom = newZoom;
+      updateTransform();
+    }
+    
     // Zoom controls
     document.getElementById('zoom-in').addEventListener('click', () => {
-      zoom = Math.min(zoom * 1.2, 5);
-      updateTransform();
+      const newZoom = Math.min(zoom * 1.2, 5);
+      zoomToCenter(newZoom);
     });
     
     document.getElementById('zoom-out').addEventListener('click', () => {
-      zoom = Math.max(zoom / 1.2, 0.2);
-      updateTransform();
+      const newZoom = Math.max(zoom / 1.2, 0.2);
+      zoomToCenter(newZoom);
     });
     
     document.getElementById('zoom-reset').addEventListener('click', () => {
@@ -290,12 +350,12 @@ const bestDiagram = project.mermaid_diagrams[bestMermaidIndex] || project.mermai
       updateTransform();
     });
     
-    // Mouse wheel zoom
+    // Mouse wheel zoom (also center-based)
     diagramContainer.addEventListener('wheel', (e) => {
       e.preventDefault();
       const delta = e.deltaY > 0 ? 0.9 : 1.1;
-      zoom = Math.min(Math.max(zoom * delta, 0.2), 5);
-      updateTransform();
+      const newZoom = Math.min(Math.max(zoom * delta, 0.2), 5);
+      zoomToCenter(newZoom);
     });
     
     // Pan functionality
@@ -324,6 +384,27 @@ const bestDiagram = project.mermaid_diagrams[bestMermaidIndex] || project.mermai
       panX = 0;
       panY = 0;
       updateTransform();
+    });
+    
+    // Handle window resize to maintain proper scaling
+    window.addEventListener('resize', () => {
+      if (svgElement) {
+        setTimeout(() => {
+          const containerRect = diagramContainer.getBoundingClientRect();
+          const svgRect = svgElement.getBoundingClientRect();
+          
+          if (svgRect.width > 0 && svgRect.height > 0) {
+            const scaleX = (containerRect.width * 0.85) / (svgRect.width / zoom);
+            const scaleY = (containerRect.height * 0.85) / (svgRect.height / zoom);
+            const newScale = Math.min(scaleX, scaleY, 1);
+            
+            if (newScale < 1 && newScale !== zoom) {
+              zoom = newScale;
+              updateTransform();
+            }
+          }
+        }, 100);
+      }
     });
   }
 </script>

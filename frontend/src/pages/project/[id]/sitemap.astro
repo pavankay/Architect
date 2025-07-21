@@ -63,7 +63,7 @@ console.log('Best sitemap:', bestSiteMap);
         </a>
       </nav>
       
-      <div class="mt-auto pt-8 space-y-4">
+      <div class="mt-auto pt-12 space-y-4">
         <button 
           id="project-details-btn"
           class="w-full px-4 py-2 font-mono text-sm bg-white/10 transition-colors rounded-lg"
@@ -80,7 +80,7 @@ console.log('Best sitemap:', bestSiteMap);
     
     <!-- Main Content -->
     <main class="flex-1 overflow-hidden bg-pattern-dots">
-      <div class="absolute top-0 left-0 right-0 z-10 bg-black/90 backdrop-blur-sm p-6">
+      <div class="p-6 bg-black border-b border-white/10">
         <Breadcrumb items={[
           { label: "Home", href: "/" },
           { label: "Projects", href: "/" },
@@ -90,7 +90,7 @@ console.log('Best sitemap:', bestSiteMap);
       </div>
       
       {bestSiteMap ? (
-        <div class="pt-24 h-full">
+        <div class="h-full">
           <SiteMapViewer siteMap={bestSiteMap} client:load />
         </div>
       ) : (

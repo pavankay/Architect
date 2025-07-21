@@ -91,36 +91,28 @@ The more detail you provide, the better the AI can plan your architecture."
         <div class="step-item" data-step="1">
           <div class="flex items-center gap-3">
             <div class="spinner"></div>
-            <svg class="checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M20 6L9 17l-5-5"/>
-            </svg>
+            <div class="checkmark">●</div>
             <span class="font-mono text-xs">Planning site structure...</span>
           </div>
         </div>
         <div class="step-item" data-step="2">
           <div class="flex items-center gap-3">
             <div class="spinner"></div>
-            <svg class="checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M20 6L9 17l-5-5"/>
-            </svg>
+            <div class="checkmark">●</div>
             <span class="font-mono text-xs">Creating site maps...</span>
           </div>
         </div>
         <div class="step-item" data-step="3">
           <div class="flex items-center gap-3">
             <div class="spinner"></div>
-            <svg class="checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M20 6L9 17l-5-5"/>
-            </svg>
+            <div class="checkmark">●</div>
             <span class="font-mono text-xs">Designing architecture diagrams...</span>
           </div>
         </div>
         <div class="step-item" data-step="4">
           <div class="flex items-center gap-3">
             <div class="spinner"></div>
-            <svg class="checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M20 6L9 17l-5-5"/>
-            </svg>
+            <div class="checkmark">●</div>
             <span class="font-mono text-xs">Finalizing project structure...</span>
           </div>
         </div>
@@ -196,11 +188,18 @@ The more detail you provide, the better the AI can plan your architecture."
     display: none;
     width: 16px;
     height: 16px;
-    color: #ffffff;
+    color: rgba(255, 255, 255, 0.1);
+    font-family: 'TG Frekuent Mono', monospace;
+    font-size: 16px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .step-item.completed .checkmark {
-    display: block;
+    display: flex;
+    color: #10b981;
   }
 
   /* Enhanced form styles */
