@@ -115,8 +115,9 @@ export default function SiteMapViewer({ siteMap }: SiteMapViewerProps) {
     const visibleRight = (canvas.width - viewOffset.x) / zoom;
     const visibleBottom = (canvas.height - viewOffset.y) / zoom;
     
-    // Draw grid background
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+    // Draw grid background with theme support
+    const isLightTheme = document.documentElement.getAttribute('data-theme') === 'light';
+    ctx.strokeStyle = isLightTheme ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.05)';
     ctx.lineWidth = 1;
     const gridSize = 20;
     
@@ -141,7 +142,7 @@ export default function SiteMapViewer({ siteMap }: SiteMapViewerProps) {
     }
     
     // Draw dots at intersections
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+    ctx.fillStyle = isLightTheme ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)';
     const dotGridSize = gridSize * 5;
     const dotStartX = Math.floor(visibleLeft / dotGridSize) * dotGridSize;
     const dotEndX = Math.ceil(visibleRight / dotGridSize) * dotGridSize;
@@ -156,8 +157,8 @@ export default function SiteMapViewer({ siteMap }: SiteMapViewerProps) {
       }
     }
     
-    // Set styles for connections
-    ctx.strokeStyle = '#ffffff';
+    // Set styles for connections with theme support
+    ctx.strokeStyle = isLightTheme ? '#000000' : '#ffffff';
     ctx.lineWidth = 2;
     ctx.setLineDash([]);
 
@@ -191,29 +192,29 @@ export default function SiteMapViewer({ siteMap }: SiteMapViewerProps) {
       const boxHeight = 60;
       
       // Draw box shadow with rounded corners
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+      ctx.fillStyle = isLightTheme ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.05)';
       ctx.beginPath();
       ctx.roundRect(node.x - boxWidth/2 + 2, node.y - boxHeight/2 + 2, boxWidth, boxHeight, 12);
       ctx.fill();
       
       // Draw box with rounded corners
-      ctx.fillStyle = '#000000';
+      ctx.fillStyle = isLightTheme ? '#ffffff' : '#000000';
       ctx.beginPath();
       ctx.roundRect(node.x - boxWidth/2, node.y - boxHeight/2, boxWidth, boxHeight, 12);
       ctx.fill();
       
-      ctx.strokeStyle = '#ffffff';
+      ctx.strokeStyle = isLightTheme ? '#000000' : '#ffffff';
       ctx.beginPath();
       ctx.roundRect(node.x - boxWidth/2, node.y - boxHeight/2, boxWidth, boxHeight, 12);
       ctx.stroke();
       
-      // Draw text
-      ctx.fillStyle = '#ffffff';
+      // Draw text with theme support
+      ctx.fillStyle = isLightTheme ? '#000000' : '#ffffff';
       ctx.textAlign = 'center';
       ctx.font = '14px TG Frekuent Mono, monospace';
       ctx.fillText(node.name, node.x, node.y - 5);
       
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+      ctx.fillStyle = isLightTheme ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.6)';
       ctx.font = '11px TG Frekuent Mono, monospace';
       ctx.fillText(node.path, node.x, node.y + 15);
     });

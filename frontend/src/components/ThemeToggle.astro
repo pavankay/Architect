@@ -1,0 +1,55 @@
+---
+---
+
+<button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+  <span id="theme-icon">🌙</span>
+  <span id="theme-text" class="ml-2">Dark</span>
+</button>
+
+<script>
+  // Theme toggle functionality
+  const themeToggle = document.getElementById('theme-toggle');
+  const themeIcon = document.getElementById('theme-icon');
+  const themeText = document.getElementById('theme-text');
+  
+  // Get initial theme from localStorage or default to dark
+  let currentTheme = localStorage.getItem('theme') || 'dark';
+  
+  // Apply theme on page load
+  function applyTheme(theme: string) {
+    if (theme === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+      if (themeIcon) themeIcon.textContent = '☀️';
+      if (themeText) themeText.textContent = 'Light';
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      if (themeIcon) themeIcon.textContent = '🌙';
+      if (themeText) themeText.textContent = 'Dark';
+    }
+  }
+  
+  // Apply initial theme
+  applyTheme(currentTheme);
+  
+  // Theme toggle event listener
+  themeToggle?.addEventListener('click', () => {
+    currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    applyTheme(currentTheme);
+    localStorage.setItem('theme', currentTheme);
+  });
+  
+  // Listen for system theme changes
+  const mediaQuery = window.matchMedia('(prefers-color-scheme: light)');
+  mediaQuery.addEventListener('change', (e) => {
+    if (!localStorage.getItem('theme')) {
+      currentTheme = e.matches ? 'light' : 'dark';
+      applyTheme(currentTheme);
+    }
+  });
+</script>
+
+<style>
+  .ml-2 {
+    margin-left: 0.5rem;
+  }
+</style>

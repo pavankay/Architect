@@ -20,7 +20,7 @@ try {
   <main class="min-h-screen p-8 bg-pattern-dots">
     <header class="max-w-6xl mx-auto mb-16 animate-fade-in">
       <div class="flex items-center gap-4 mb-4">
-        <Image src={logo} alt="Architect Logo" class="h-14 w-14 object-contain hover-scale" width={56} height={56} />
+        <Image src={logo} alt="Architect Logo" class="h-14 w-14 object-contain" width={56} height={56} />
         <h1 class="font-mono text-4xl tracking-tight">Architect</h1>
       </div>
       <p class="font-mono text-base opacity-80 max-w-lg leading-relaxed">AI-powered site planning and architecture tool for modern developers</p>
@@ -34,7 +34,7 @@ try {
         </div>
         <button
           id="create-project-btn"
-          class="bg-white text-black px-8 py-4 font-mono hover:bg-opacity-90 transition-all rounded-lg hover-scale"
+          class="bg-white text-black px-8 py-4 font-mono transition-opacity rounded-lg"
         >
           <span class="text-lg">+</span> Create Project
         </button>
@@ -63,7 +63,7 @@ try {
             </p>
             <button
               onclick="document.getElementById('create-project-btn').click()"
-              class="bg-white/10 border border-white/20 text-white px-6 py-3 font-mono hover:bg-white/20 transition-all rounded-lg hover-scale"
+              class="bg-white/10 border border-white/20 text-white px-6 py-3 font-mono transition-colors rounded-lg"
             >
               Create Your First Project
             </button>

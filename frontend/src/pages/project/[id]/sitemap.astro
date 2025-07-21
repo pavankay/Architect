@@ -1,6 +1,7 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
 import SiteMapViewer from '../../../components/SiteMapViewer';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
 
 const { id } = Astro.params;
 
@@ -77,14 +78,33 @@ console.log('Best sitemap:', bestSiteMap);
     </aside>
     
     <!-- Main Content -->
-    <main class="flex-1 overflow-hidden">
+    <main class="flex-1 overflow-hidden bg-pattern-dots">
+      <div class="absolute top-0 left-0 right-0 z-10 bg-black/90 backdrop-blur-sm p-6">
+        <Breadcrumb items={[
+          { label: "Home", href: "/" },
+          { label: "Projects", href: "/" },
+          { label: project.name, href: `/project/${id}` },
+          { label: "Site Map" }
+        ]} />
+      </div>
+      
       {bestSiteMap ? (
-        <SiteMapViewer siteMap={bestSiteMap} client:load />
+        <div class="pt-24 h-full">
+          <SiteMapViewer siteMap={bestSiteMap} client:load />
+        </div>
       ) : (
         <div class="flex items-center justify-center h-full">
-          <div class="text-center">
-            <p class="font-mono text-lg opacity-60 mb-4">No sitemap available</p>
-            <p class="font-mono text-sm opacity-40">The AI is still generating the sitemap or there was an error.</p>
+          <div class="text-center animate-fade-in">
+            <div class="loading-spinner mx-auto mb-6"></div>
+            <p class="font-mono text-lg mb-4">Generating site map<span class="loading-dots"></span></p>
+            <p class="font-mono text-sm opacity-60 max-w-md mx-auto leading-relaxed">
+              Our AI is analyzing your project structure and creating an interactive visualization. This may take a few moments.
+            </p>
+            <div class="mt-8 space-y-4">
+              <div class="skeleton h-4 w-64 mx-auto rounded"></div>
+              <div class="skeleton h-4 w-48 mx-auto rounded"></div>
+              <div class="skeleton h-4 w-56 mx-auto rounded"></div>
+            </div>
           </div>
         </div>
       )}

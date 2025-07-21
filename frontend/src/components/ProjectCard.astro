@@ -14,7 +14,7 @@ const formattedDate = new Date(createdAt).toLocaleDateString('en-US', {
 });
 ---
 
-<a href={`/project/${id}`} class="project-card hover-scale">
+<a href={`/project/${id}`} class="project-card">
   <div class="project-header">
     <h3 class="font-mono text-lg mb-3 leading-tight">{name}</h3>
     <div class="project-meta">
@@ -43,26 +43,10 @@ const formattedDate = new Date(createdAt).toLocaleDateString('en-US', {
     overflow: hidden;
   }
 
-  .project-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
 
-  .project-card:hover::before {
-    opacity: 1;
-  }
-
-  .project-card:hover {
+  .project-card:focus {
     background-color: rgba(255, 255, 255, 0.05);
     border-color: rgba(255, 255, 255, 0.2);
-    transform: translateY(-3px);
   }
 
   .project-header {
@@ -83,10 +67,6 @@ const formattedDate = new Date(createdAt).toLocaleDateString('en-US', {
     transform: translateX(0);
   }
 
-  .project-card:hover .project-arrow {
-    opacity: 1;
-    transform: translateX(4px);
-  }
 
   .project-status {
     display: flex;
