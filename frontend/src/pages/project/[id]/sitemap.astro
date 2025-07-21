@@ -37,35 +37,36 @@ console.log('Best sitemap:', bestSiteMap);
 <Layout title={`Site Map - ${project.name}`}>
   <div class="flex h-screen">
     <!-- Sidebar -->
-    <aside class="w-64 bg-black border-r border-white/10 p-6 flex flex-col">
-      <a href="/" class="flex items-center gap-2 mb-8 hover:opacity-80 transition-opacity">
+    <aside class="w-64 bg-black border-r border-white/10 p-6 flex flex-col bg-pattern-grid">
+      <a href="/" class="flex items-center gap-3 mb-8 transition-opacity group">
         <img src="/sitebuilder.png" alt="Architect Logo" class="h-8 w-8 object-contain" />
-        <span class="font-mono text-sm">Architect</span>
+        <span class="font-mono text-sm transition-colors">Architect</span>
       </a>
       
-      <div class="mb-8">
-        <h2 class="font-mono text-lg">{project.name}</h2>
+      <div class="mb-8 pb-6 border-b border-white/10">
+        <h2 class="font-mono text-lg mb-1">{project.name}</h2>
+        <p class="font-mono text-xs opacity-60">Project Dashboard</p>
       </div>
       
-      <nav class="space-y-2 flex-1">
-        <a href={`/project/${id}`} class="block px-4 py-2 font-mono text-sm hover:bg-white/5 rounded-lg transition-colors">
-          Overview
+      <nav class="space-y-1 flex-1">
+        <a href={`/project/${id}`} class="nav-item">
+          <span>Overview</span>
         </a>
-        <a href={`/project/${id}/sitemap`} class="block px-4 py-2 font-mono text-sm bg-white/10 rounded-lg">
-          Site Map
+        <a href={`/project/${id}/sitemap`} class="nav-item nav-active">
+          <span>Site Map</span>
         </a>
-        <a href={`/project/${id}/architecture`} class="block px-4 py-2 font-mono text-sm hover:bg-white/5 rounded-lg transition-colors">
-          Frontend
+        <a href={`/project/${id}/architecture`} class="nav-item">
+          <span>Frontend</span>
         </a>
-        <a href={`/project/${id}/backend`} class="block px-4 py-2 font-mono text-sm hover:bg-white/5 rounded-lg transition-colors">
-          Backend
+        <a href={`/project/${id}/backend`} class="nav-item">
+          <span>Backend</span>
         </a>
       </nav>
       
       <div class="mt-auto pt-8 space-y-4">
         <button 
           id="project-details-btn"
-          class="w-full px-4 py-2 font-mono text-sm bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+          class="w-full px-4 py-2 font-mono text-sm bg-white/10 transition-colors rounded-lg"
         >
           Project Details
         </button>
@@ -216,3 +217,32 @@ console.log('Best sitemap:', bestSiteMap);
     });
   });
 </script>
+
+<style>
+  /* Enhanced navigation styles */
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    font-family: 'TG Frekuent Mono', monospace;
+    font-size: 0.875rem;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.7);
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+  }
+
+  .nav-item:focus {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.9);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .nav-active {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+</style>

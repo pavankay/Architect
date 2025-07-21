@@ -34,19 +34,15 @@ if (!project) {
       
       <nav class="space-y-1 flex-1">
         <a href={`/project/${id}`} class="nav-item nav-active">
-          <span class="nav-icon">📊</span>
           <span>Overview</span>
         </a>
         <a href={`/project/${id}/sitemap`} class="nav-item">
-          <span class="nav-icon">🗺️</span>
           <span>Site Map</span>
         </a>
         <a href={`/project/${id}/architecture`} class="nav-item">
-          <span class="nav-icon">🏗️</span>
           <span>Frontend</span>
         </a>
         <a href={`/project/${id}/backend`} class="nav-item">
-          <span class="nav-icon">⚙️</span>
           <span>Backend</span>
         </a>
       </nav>
@@ -83,7 +79,6 @@ if (!project) {
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
           <a href={`/project/${id}/sitemap`} class="overview-card animate-scale-in">
-            <div class="card-icon">🗺️</div>
             <h3 class="font-mono text-xl mb-3">Site Map</h3>
             <p class="font-mono text-sm opacity-60 mb-6 leading-relaxed">Interactive site structure and page hierarchy visualization</p>
             <div class="card-action">
@@ -93,7 +88,6 @@ if (!project) {
           </a>
           
           <a href={`/project/${id}/architecture`} class="overview-card animate-scale-in animate-delay-100">
-            <div class="card-icon">🏗️</div>
             <h3 class="font-mono text-xl mb-3">Frontend</h3>
             <p class="font-mono text-sm opacity-60 mb-6 leading-relaxed">UI components hierarchy and data flow architecture</p>
             <div class="card-action">
@@ -103,7 +97,6 @@ if (!project) {
           </a>
           
           <a href={`/project/${id}/backend`} class="overview-card animate-scale-in animate-delay-200">
-            <div class="card-icon">⚙️</div>
             <h3 class="font-mono text-xl mb-3">Backend</h3>
             <p class="font-mono text-sm opacity-60 mb-6 leading-relaxed">API design and database schema visualization</p>
             <div class="card-action">
@@ -250,10 +243,6 @@ if (!project) {
     border-color: rgba(255, 255, 255, 0.2);
   }
 
-  .nav-icon {
-    font-size: 1rem;
-    opacity: 0.8;
-  }
 
   /* Enhanced overview cards */
   .overview-card {
@@ -274,11 +263,6 @@ if (!project) {
     border-color: rgba(255, 255, 255, 0.2);
   }
 
-  .card-icon {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-    opacity: 0.8;
-  }
 
   .card-action {
     display: flex;

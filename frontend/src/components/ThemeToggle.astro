@@ -2,14 +2,12 @@
 ---
 
 <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
-  <span id="theme-icon">🌙</span>
-  <span id="theme-text" class="ml-2">Dark</span>
+  <span id="theme-text">Dark Mode</span>
 </button>
 
 <script>
   // Theme toggle functionality
   const themeToggle = document.getElementById('theme-toggle');
-  const themeIcon = document.getElementById('theme-icon');
   const themeText = document.getElementById('theme-text');
   
   // Get initial theme from localStorage or default to dark
@@ -19,12 +17,10 @@
   function applyTheme(theme: string) {
     if (theme === 'light') {
       document.documentElement.setAttribute('data-theme', 'light');
-      if (themeIcon) themeIcon.textContent = '☀️';
-      if (themeText) themeText.textContent = 'Light';
+      if (themeText) themeText.textContent = 'Light Mode';
     } else {
       document.documentElement.removeAttribute('data-theme');
-      if (themeIcon) themeIcon.textContent = '🌙';
-      if (themeText) themeText.textContent = 'Dark';
+      if (themeText) themeText.textContent = 'Dark Mode';
     }
   }
   
