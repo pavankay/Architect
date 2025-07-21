@@ -321,7 +321,7 @@ export default function SiteMapViewer({ siteMap }: SiteMapViewerProps) {
           >
             <div className="flex justify-between items-start mb-6">
               <div>
-                <h2 className="font-mono text-2xl text-white mb-2">{selectedNode.name}</h2>
+                <h2 className="font-antikor-title text-2xl text-white mb-2">{selectedNode.name}</h2>
                 <code className="text-white/60 font-mono text-sm bg-white/10 px-2 py-1 rounded-md">
                   {selectedNode.path}
                 </code>
@@ -336,14 +336,14 @@ export default function SiteMapViewer({ siteMap }: SiteMapViewerProps) {
             
             {selectedNode.page.description && (
               <div className="mb-6">
-                <h3 className="font-mono text-sm text-white/60 mb-2">Description</h3>
+                <h3 className="font-antikor-title text-sm text-white/60 mb-2">Description</h3>
                 <p className="font-mono text-sm text-white/80">{selectedNode.page.description}</p>
               </div>
             )}
             
             {selectedNode.page.features && selectedNode.page.features.length > 0 && (
               <div className="mb-6">
-                <h3 className="font-mono text-sm text-white/60 mb-2">Features</h3>
+                <h3 className="font-antikor-title text-sm text-white/60 mb-2">Features</h3>
                 <ul className="space-y-1">
                   {selectedNode.page.features.map((feature, i) => (
                     <li key={i} className="font-mono text-sm text-white/80">• {feature}</li>
@@ -354,7 +354,7 @@ export default function SiteMapViewer({ siteMap }: SiteMapViewerProps) {
             
             {selectedNode.page.technical_requirements && selectedNode.page.technical_requirements.length > 0 && (
               <div className="mb-6">
-                <h3 className="font-mono text-sm text-white/60 mb-2">Technical Requirements</h3>
+                <h3 className="font-antikor-title text-sm text-white/60 mb-2">Technical Requirements</h3>
                 <ul className="space-y-1">
                   {selectedNode.page.technical_requirements.map((req, i) => (
                     <li key={i} className="font-mono text-sm text-white/80">• {req}</li>
@@ -365,7 +365,7 @@ export default function SiteMapViewer({ siteMap }: SiteMapViewerProps) {
             
             {selectedNode.page.user_interactions && selectedNode.page.user_interactions.length > 0 && (
               <div className="mb-6">
-                <h3 className="font-mono text-sm text-white/60 mb-2">User Interactions</h3>
+                <h3 className="font-antikor-title text-sm text-white/60 mb-2">User Interactions</h3>
                 <ul className="space-y-1">
                   {selectedNode.page.user_interactions.map((interaction, i) => (
                     <li key={i} className="font-mono text-sm text-white/80">• {interaction}</li>
@@ -376,7 +376,7 @@ export default function SiteMapViewer({ siteMap }: SiteMapViewerProps) {
             
             {selectedNode.page.data_requirements && selectedNode.page.data_requirements.length > 0 && (
               <div className="mb-6">
-                <h3 className="font-mono text-sm text-white/60 mb-2">Data Requirements</h3>
+                <h3 className="font-antikor-title text-sm text-white/60 mb-2">Data Requirements</h3>
                 <ul className="space-y-1">
                   {selectedNode.page.data_requirements.map((data, i) => (
                     <li key={i} className="font-mono text-sm text-white/80">• {data}</li>
@@ -387,7 +387,7 @@ export default function SiteMapViewer({ siteMap }: SiteMapViewerProps) {
             
             {selectedNode.page.seo_considerations && selectedNode.page.seo_considerations.length > 0 && (
               <div className="mb-6">
-                <h3 className="font-mono text-sm text-white/60 mb-2">SEO Considerations</h3>
+                <h3 className="font-antikor-title text-sm text-white/60 mb-2">SEO Considerations</h3>
                 <ul className="space-y-1">
                   {selectedNode.page.seo_considerations.map((seo, i) => (
                     <li key={i} className="font-mono text-sm text-white/80">• {seo}</li>
