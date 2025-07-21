@@ -309,75 +309,92 @@ The more detail you provide, the better the AI can plan your architecture."
     form.classList.add('hidden');
     loadingState?.classList.remove('hidden');
     
-    // AI callback messages
+    // AI callback messages container
     const aiCallbacks = document.getElementById('ai-callbacks');
-    const messages = [
-      "Analyzing project requirements...",
-      "Identifying key user personas and use cases...",
-      "Mapping out core features and functionality...",
-      "Determining technical stack requirements...",
-      "Creating page hierarchy and navigation flow...",
-      "Designing component architecture...",
-      "Planning API endpoints and data models...",
-      "Optimizing for SEO and performance...",
-      "Configuring authentication and security layers...",
-      "Setting up state management patterns...",
-      "Defining responsive breakpoints...",
-      "Planning progressive enhancement strategy...",
-      "Creating accessibility guidelines...",
-      "Finalizing project structure..."
-    ];
     
-    let messageIndex = 0;
-    const messageInterval = setInterval(() => {
-      if (messageIndex < messages.length && aiCallbacks) {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = 'opacity-0 transition-opacity duration-500';
-        messageDiv.textContent = `> ${messages[messageIndex]}`;
-        aiCallbacks.appendChild(messageDiv);
-        
-        // Fade in effect
-        setTimeout(() => {
-          messageDiv.classList.remove('opacity-0');
-        }, 50);
-        
-        // Auto scroll to bottom
-        aiCallbacks.scrollTop = aiCallbacks.scrollHeight;
-        messageIndex++;
-      }
-    }, 500);
+    // Connect to WebSocket for real-time updates
+    const wsUrl = 'ws://localhost:8000/ws';
+    const ws = new WebSocket(wsUrl);
     
-    // Animate steps with longer delays
+    // Step mapping for progress tracking
+    const stepMapping = {
+      'planning': 1,
+      'sitemap': 2, 
+      'architecture': 3,
+      'backend': 4,
+      'finalize': 4
+    };
+    
     const steps = loadingState?.querySelectorAll('.step-item');
-    steps?.forEach((step, index) => {
-      setTimeout(() => {
-        step.classList.add('active');
-        // Mark previous step as completed
-        if (index > 0) {
-          steps[index - 1].classList.add('completed');
-          steps[index - 1].classList.remove('active');
-        }
-        // Mark last step as completed after a delay
-        if (index === steps.length - 1) {
+    let currentStepIndex = -1;
+    
+    ws.onopen = () => {
+      console.log('WebSocket connected');
+    };
+    
+    ws.onmessage = (event) => {
+      try {
+        const progressData = JSON.parse(event.data);
+        console.log('Progress update:', progressData);
+        
+        // Add message to callbacks
+        if (aiCallbacks) {
+          const messageDiv = document.createElement('div');
+          messageDiv.className = 'opacity-0 transition-opacity duration-500';
+          messageDiv.textContent = `> ${progressData.message}`;
+          aiCallbacks.appendChild(messageDiv);
+          
+          // Fade in effect
           setTimeout(() => {
-            step.classList.add('completed');
-            step.classList.remove('active');
-            clearInterval(messageInterval);
-            
-            // Add final message
-            if (aiCallbacks) {
-              const finalMsg = document.createElement('div');
-              finalMsg.className = 'text-white font-bold mt-2';
-              finalMsg.textContent = '> Project structure complete!';
-              aiCallbacks.appendChild(finalMsg);
-            }
-          }, 2000);
+            messageDiv.classList.remove('opacity-0');
+          }, 50);
+          
+          // Auto scroll to bottom
+          aiCallbacks.scrollTop = aiCallbacks.scrollHeight;
         }
-      }, index * 2000);
-    });
+        
+        // Update step progress
+        const stepIndex = stepMapping[progressData.step];
+        if (stepIndex && steps) {
+          // Mark current step as active
+          if (stepIndex - 1 !== currentStepIndex) {
+            // Complete previous step
+            if (currentStepIndex >= 0) {
+              steps[currentStepIndex].classList.add('completed');
+              steps[currentStepIndex].classList.remove('active');
+            }
+            
+            // Activate current step  
+            if (stepIndex - 1 < steps.length) {
+              steps[stepIndex - 1].classList.add('active');
+              currentStepIndex = stepIndex - 1;
+            }
+          }
+          
+          // Complete final step when done
+          if (progressData.progress === 100) {
+            if (currentStepIndex >= 0) {
+              steps[currentStepIndex].classList.add('completed');
+              steps[currentStepIndex].classList.remove('active');
+            }
+          }
+        }
+        
+      } catch (error) {
+        console.error('Error parsing progress data:', error);
+      }
+    };
+    
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+    
+    ws.onclose = () => {
+      console.log('WebSocket disconnected');
+    };
     
     try {
-      const response = await fetch('http://localhost:5000/projects', {
+      const response = await fetch('http://localhost:8000/projects', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -387,16 +404,22 @@ The more detail you provide, the better the AI can plan your architecture."
       
       if (response.ok) {
         const project = await response.json();
-        // Immediate redirect
-        window.location.href = `/project/${project.id}`;
+        
+        // Wait a moment for final progress updates, then redirect
+        setTimeout(() => {
+          ws.close();
+          window.location.href = `/project/${project.id}`;
+        }, 2000);
       } else {
         console.error('Failed to create project');
+        ws.close();
         // Reset form
         form.classList.remove('hidden');
         loadingState?.classList.add('hidden');
       }
     } catch (error) {
       console.error('Error creating project:', error);
+      ws.close();
       // Reset form
       form.classList.remove('hidden');
       loadingState?.classList.add('hidden');
