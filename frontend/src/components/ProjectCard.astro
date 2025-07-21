@@ -14,27 +14,103 @@ const formattedDate = new Date(createdAt).toLocaleDateString('en-US', {
 });
 ---
 
-<a href={`/project/${id}`} class="project-card">
-  <h3 class="font-mono text-lg mb-2">{name}</h3>
-  <time class="font-mono text-xs opacity-60">{formattedDate}</time>
+<a href={`/project/${id}`} class="project-card hover-scale">
+  <div class="project-header">
+    <h3 class="font-mono text-lg mb-3 leading-tight">{name}</h3>
+    <div class="project-meta">
+      <time class="font-mono text-xs opacity-60">{formattedDate}</time>
+      <div class="project-arrow">→</div>
+    </div>
+  </div>
+  <div class="project-status">
+    <div class="status-dot"></div>
+    <span class="font-mono text-xs opacity-60">Active</span>
+  </div>
 </a>
 
 <style>
   .project-card {
     display: block;
-    padding: 1.5rem;
+    padding: 2rem;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 0.75rem;
-    margin-bottom: 0.75rem;
-    transition: all 0.2s ease;
+    border-radius: 1rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     text-decoration: none;
     color: inherit;
+    background: rgba(255, 255, 255, 0.02);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .project-card:hover::before {
+    opacity: 1;
   }
 
   .project-card:hover {
     background-color: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.3);
-    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-3px);
+  }
+
+  .project-header {
+    margin-bottom: 1rem;
+  }
+
+  .project-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .project-arrow {
+    font-mono: true;
+    font-size: 1rem;
+    opacity: 0.4;
+    transition: all 0.3s ease;
+    transform: translateX(0);
+  }
+
+  .project-card:hover .project-arrow {
+    opacity: 1;
+    transform: translateX(4px);
+  }
+
+  .project-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(34, 197, 94, 0.8);
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
   }
 
   .line-clamp-2 {

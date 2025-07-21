@@ -17,41 +17,57 @@ try {
 ---
 
 <Layout title="Architect - AI Site Planning">
-  <main class="min-h-screen p-8">
-    <header class="max-w-6xl mx-auto mb-12">
-      <div class="flex items-center gap-3 mb-3">
-        <Image src={logo} alt="Architect Logo" class="h-12 w-12 object-contain" width={48} height={48} />
-        <h1 class="font-mono text-3xl">Architect</h1>
+  <main class="min-h-screen p-8 bg-pattern-dots">
+    <header class="max-w-6xl mx-auto mb-16 animate-fade-in">
+      <div class="flex items-center gap-4 mb-4">
+        <Image src={logo} alt="Architect Logo" class="h-14 w-14 object-contain hover-scale" width={56} height={56} />
+        <h1 class="font-mono text-4xl tracking-tight">Architect</h1>
       </div>
-      <p class="font-mono text-sm opacity-80">AI-powered site planning and architecture tool</p>
+      <p class="font-mono text-base opacity-80 max-w-lg leading-relaxed">AI-powered site planning and architecture tool for modern developers</p>
     </header>
 
-    <section class="max-w-6xl mx-auto">
-      <div class="flex justify-between items-center mb-8">
-        <h2 class="font-mono text-2xl">Projects</h2>
+    <section class="max-w-6xl mx-auto animate-slide-in animate-delay-200">
+      <div class="flex justify-between items-center mb-12">
+        <div>
+          <h2 class="font-mono text-3xl mb-2">Projects</h2>
+          <p class="font-mono text-sm opacity-60">Manage and explore your architectural designs</p>
+        </div>
         <button
           id="create-project-btn"
-          class="bg-white text-black px-6 py-3 font-mono hover:bg-opacity-90 transition-opacity rounded-lg"
+          class="bg-white text-black px-8 py-4 font-mono hover:bg-opacity-90 transition-all rounded-lg hover-scale"
         >
-          + Create Project
+          <span class="text-lg">+</span> Create Project
         </button>
       </div>
 
       {projects.length > 0 ? (
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {projects.map((project: any) => (
-            <ProjectCard
-              id={project.id}
-              name={project.name}
-              description={project.description}
-              createdAt={project.created_at}
-            />
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {projects.map((project: any, index: number) => (
+            <div class={`animate-scale-in animate-delay-${Math.min(index * 100 + 300, 600)}`}>
+              <ProjectCard
+                id={project.id}
+                name={project.name}
+                description={project.description}
+                createdAt={project.created_at}
+              />
+            </div>
           ))}
         </div>
       ) : (
-        <div class="text-center py-16">
-          <p class="font-mono text-lg mb-4">No projects yet</p>
-          <p class="font-mono text-sm opacity-60">Create your first project to get started</p>
+        <div class="text-center py-24 animate-fade-in animate-delay-300">
+          <div class="inline-block p-8 border border-white/10 rounded-2xl bg-white/[0.02]">
+            <div class="text-6xl mb-6 opacity-20">📐</div>
+            <h3 class="font-mono text-xl mb-4">No projects yet</h3>
+            <p class="font-mono text-sm opacity-60 mb-6 max-w-md mx-auto leading-relaxed">
+              Get started by creating your first project. Our AI will help you plan the perfect architecture.
+            </p>
+            <button
+              onclick="document.getElementById('create-project-btn').click()"
+              class="bg-white/10 border border-white/20 text-white px-6 py-3 font-mono hover:bg-white/20 transition-all rounded-lg hover-scale"
+            >
+              Create Your First Project
+            </button>
+          </div>
         </div>
       )}
     </section>

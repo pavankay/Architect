@@ -20,28 +20,33 @@ if (!project) {
 <Layout title={`${project.name} - Architect`}>
   <div class="flex h-screen">
     <!-- Sidebar -->
-    <aside class="w-64 bg-black border-r border-white/10 p-6 flex flex-col">
-      <a href="/" class="flex items-center gap-2 mb-8 hover:opacity-80 transition-opacity">
+    <aside class="w-64 bg-black border-r border-white/10 p-6 flex flex-col bg-pattern-grid">
+      <a href="/" class="flex items-center gap-3 mb-8 hover:opacity-80 transition-all hover-scale group">
         <img src="/sitebuilder.png" alt="Architect Logo" class="h-8 w-8 object-contain" />
-        <span class="font-mono text-sm">Architect</span>
+        <span class="font-mono text-sm group-hover:text-white transition-colors">Architect</span>
       </a>
       
-      <div class="mb-8">
-        <h2 class="font-mono text-lg">{project.name}</h2>
+      <div class="mb-8 pb-6 border-b border-white/10">
+        <h2 class="font-mono text-lg mb-1">{project.name}</h2>
+        <p class="font-mono text-xs opacity-60">Project Dashboard</p>
       </div>
       
-      <nav class="space-y-2 flex-1">
-        <a href={`/project/${id}`} class="block px-4 py-2 font-mono text-sm bg-white/10 rounded-lg">
-          Overview
+      <nav class="space-y-1 flex-1">
+        <a href={`/project/${id}`} class="nav-item nav-active">
+          <span class="nav-icon">📊</span>
+          <span>Overview</span>
         </a>
-        <a href={`/project/${id}/sitemap`} class="block px-4 py-2 font-mono text-sm hover:bg-white/5 rounded-lg transition-colors">
-          Site Map
+        <a href={`/project/${id}/sitemap`} class="nav-item">
+          <span class="nav-icon">🗺️</span>
+          <span>Site Map</span>
         </a>
-        <a href={`/project/${id}/architecture`} class="block px-4 py-2 font-mono text-sm hover:bg-white/5 rounded-lg transition-colors">
-          Frontend
+        <a href={`/project/${id}/architecture`} class="nav-item">
+          <span class="nav-icon">🏗️</span>
+          <span>Frontend</span>
         </a>
-        <a href={`/project/${id}/backend`} class="block px-4 py-2 font-mono text-sm hover:bg-white/5 rounded-lg transition-colors">
-          Backend
+        <a href={`/project/${id}/backend`} class="nav-item">
+          <span class="nav-icon">⚙️</span>
+          <span>Backend</span>
         </a>
       </nav>
       
@@ -61,34 +66,43 @@ if (!project) {
     </aside>
     
     <!-- Main Content -->
-    <main class="flex-1 p-8 overflow-auto">
-      <div class="max-w-4xl mx-auto">
-        <h1 class="font-mono text-3xl mb-8">Project Overview</h1>
+    <main class="flex-1 p-8 overflow-auto bg-pattern-dots">
+      <div class="max-w-4xl mx-auto animate-fade-in">
+        <div class="mb-12">
+          <h1 class="font-mono text-4xl mb-3">Project Overview</h1>
+          <p class="font-mono text-sm opacity-60">Explore your project's architecture and structure</p>
+        </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="p-6 bg-white/5 rounded-xl border border-white/10 hover:border-white/20 transition-colors">
-            <h3 class="font-mono text-lg mb-2">Site Map</h3>
-            <p class="font-mono text-sm opacity-60 mb-4">Interactive site structure</p>
-            <a href={`/project/${id}/sitemap`} class="font-mono text-sm text-white hover:underline">
-              View Site Map →
-            </a>
-          </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <a href={`/project/${id}/sitemap`} class="overview-card hover-scale animate-scale-in">
+            <div class="card-icon">🗺️</div>
+            <h3 class="font-mono text-xl mb-3">Site Map</h3>
+            <p class="font-mono text-sm opacity-60 mb-6 leading-relaxed">Interactive site structure and page hierarchy visualization</p>
+            <div class="card-action">
+              <span class="font-mono text-sm">Explore Site Map</span>
+              <span class="action-arrow">→</span>
+            </div>
+          </a>
           
-          <div class="p-6 bg-white/5 rounded-xl border border-white/10 hover:border-white/20 transition-colors">
-            <h3 class="font-mono text-lg mb-2">Frontend</h3>
-            <p class="font-mono text-sm opacity-60 mb-4">UI components and architecture</p>
-            <a href={`/project/${id}/architecture`} class="font-mono text-sm text-white hover:underline">
-              View Frontend →
-            </a>
-          </div>
+          <a href={`/project/${id}/architecture`} class="overview-card hover-scale animate-scale-in animate-delay-100">
+            <div class="card-icon">🏗️</div>
+            <h3 class="font-mono text-xl mb-3">Frontend</h3>
+            <p class="font-mono text-sm opacity-60 mb-6 leading-relaxed">UI components hierarchy and data flow architecture</p>
+            <div class="card-action">
+              <span class="font-mono text-sm">View Frontend</span>
+              <span class="action-arrow">→</span>
+            </div>
+          </a>
           
-          <div class="p-6 bg-white/5 rounded-xl border border-white/10 hover:border-white/20 transition-colors">
-            <h3 class="font-mono text-lg mb-2">Backend</h3>
-            <p class="font-mono text-sm opacity-60 mb-4">API and database design</p>
-            <a href={`/project/${id}/backend`} class="font-mono text-sm text-white hover:underline">
-              View Backend →
-            </a>
-          </div>
+          <a href={`/project/${id}/backend`} class="overview-card hover-scale animate-scale-in animate-delay-200">
+            <div class="card-icon">⚙️</div>
+            <h3 class="font-mono text-xl mb-3">Backend</h3>
+            <p class="font-mono text-sm opacity-60 mb-6 leading-relaxed">API design and database schema visualization</p>
+            <div class="card-action">
+              <span class="font-mono text-sm">View Backend</span>
+              <span class="action-arrow">→</span>
+            </div>
+          </a>
         </div>
       </div>
     </main>
@@ -199,3 +213,98 @@ if (!project) {
     });
   });
 </script>
+
+<style>
+  /* Enhanced navigation styles */
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    font-family: 'TG Frekuent Mono', monospace;
+    font-size: 0.875rem;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.7);
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+  }
+
+  .nav-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.9);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .nav-active {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .nav-icon {
+    font-size: 1rem;
+    opacity: 0.8;
+  }
+
+  /* Enhanced overview cards */
+  .overview-card {
+    display: block;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .overview-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .overview-card:hover::before {
+    opacity: 1;
+  }
+
+  .overview-card:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-4px);
+  }
+
+  .card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    opacity: 0.8;
+  }
+
+  .card-action {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+  }
+
+  .action-arrow {
+    font-family: 'TG Frekuent Mono', monospace;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+    transform: translateX(0);
+  }
+
+  .overview-card:hover .action-arrow {
+    opacity: 1;
+    transform: translateX(4px);
+  }
+</style>
