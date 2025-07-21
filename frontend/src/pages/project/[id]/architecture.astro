@@ -42,16 +42,16 @@ const bestDiagram = project.mermaid_diagrams[bestMermaidIndex] || project.mermai
       </div>
       
       <nav class="space-y-2 flex-1">
-        <a href={`/project/${id}`} class="block px-4 py-2 font-mono text-sm hover:bg-white/5 rounded transition-colors">
+        <a href={`/project/${id}`} class="block px-4 py-2 font-mono text-sm hover:bg-white/5 rounded-lg transition-colors">
           Overview
         </a>
-        <a href={`/project/${id}/sitemap`} class="block px-4 py-2 font-mono text-sm hover:bg-white/5 rounded transition-colors">
+        <a href={`/project/${id}/sitemap`} class="block px-4 py-2 font-mono text-sm hover:bg-white/5 rounded-lg transition-colors">
           Site Map
         </a>
-        <a href={`/project/${id}/architecture`} class="block px-4 py-2 font-mono text-sm bg-white/10 rounded">
+        <a href={`/project/${id}/architecture`} class="block px-4 py-2 font-mono text-sm bg-white/10 rounded-lg">
           Frontend
         </a>
-        <a href={`/project/${id}/backend`} class="block px-4 py-2 font-mono text-sm hover:bg-white/5 rounded transition-colors">
+        <a href={`/project/${id}/backend`} class="block px-4 py-2 font-mono text-sm hover:bg-white/5 rounded-lg transition-colors">
           Backend
         </a>
       </nav>
@@ -59,7 +59,7 @@ const bestDiagram = project.mermaid_diagrams[bestMermaidIndex] || project.mermai
       <div class="mt-auto pt-8 space-y-4">
         <button 
           id="project-details-btn"
-          class="w-full px-4 py-2 font-mono text-sm bg-white/10 hover:bg-white/20 rounded transition-colors"
+          class="w-full px-4 py-2 font-mono text-sm bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
         >
           Project Details
         </button>
@@ -82,9 +82,9 @@ const bestDiagram = project.mermaid_diagrams[bestMermaidIndex] || project.mermai
         <div class="w-full h-full pt-24 relative">
           <!-- Zoom Controls -->
           <div class="absolute top-4 right-4 z-10 flex flex-col gap-2">
-            <button id="zoom-in" class="px-3 py-1 bg-white/10 hover:bg-white/20 rounded font-mono text-sm">+</button>
-            <button id="zoom-out" class="px-3 py-1 bg-white/10 hover:bg-white/20 rounded font-mono text-sm">-</button>
-            <button id="zoom-reset" class="px-3 py-1 bg-white/10 hover:bg-white/20 rounded font-mono text-sm">Reset</button>
+            <button id="zoom-in" class="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-lg font-mono text-sm">+</button>
+            <button id="zoom-out" class="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-lg font-mono text-sm">-</button>
+            <button id="zoom-reset" class="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-lg font-mono text-sm">Reset</button>
           </div>
           
           
@@ -99,7 +99,7 @@ const bestDiagram = project.mermaid_diagrams[bestMermaidIndex] || project.mermai
   <!-- Project Details Modal -->
   <div id="project-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm hidden z-50">
     <div class="flex items-center justify-center h-full p-8">
-      <div class="bg-black border border-white/20 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
+      <div class="bg-black border border-white/20 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
         <!-- Modal Header -->
         <div class="border-b border-white/10 p-6">
           <div class="flex justify-between items-start">
@@ -142,7 +142,7 @@ const bestDiagram = project.mermaid_diagrams[bestMermaidIndex] || project.mermai
             <button 
               id="delete-project-btn"
               data-project-id={id}
-              class="px-6 py-2 font-mono text-sm bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded transition-colors"
+              class="px-6 py-2 font-mono text-sm bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded-lg transition-colors"
             >
               Delete Project
             </button>

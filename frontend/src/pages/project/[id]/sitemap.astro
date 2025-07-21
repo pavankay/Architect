@@ -47,16 +47,16 @@ console.log('Best sitemap:', bestSiteMap);
       </div>
       
       <nav class="space-y-2 flex-1">
-        <a href={`/project/${id}`} class="block px-4 py-2 font-mono text-sm hover:bg-white/5 rounded transition-colors">
+        <a href={`/project/${id}`} class="block px-4 py-2 font-mono text-sm hover:bg-white/5 rounded-lg transition-colors">
           Overview
         </a>
-        <a href={`/project/${id}/sitemap`} class="block px-4 py-2 font-mono text-sm bg-white/10 rounded">
+        <a href={`/project/${id}/sitemap`} class="block px-4 py-2 font-mono text-sm bg-white/10 rounded-lg">
           Site Map
         </a>
-        <a href={`/project/${id}/architecture`} class="block px-4 py-2 font-mono text-sm hover:bg-white/5 rounded transition-colors">
+        <a href={`/project/${id}/architecture`} class="block px-4 py-2 font-mono text-sm hover:bg-white/5 rounded-lg transition-colors">
           Frontend
         </a>
-        <a href={`/project/${id}/backend`} class="block px-4 py-2 font-mono text-sm hover:bg-white/5 rounded transition-colors">
+        <a href={`/project/${id}/backend`} class="block px-4 py-2 font-mono text-sm hover:bg-white/5 rounded-lg transition-colors">
           Backend
         </a>
       </nav>
@@ -64,7 +64,7 @@ console.log('Best sitemap:', bestSiteMap);
       <div class="mt-auto pt-8 space-y-4">
         <button 
           id="project-details-btn"
-          class="w-full px-4 py-2 font-mono text-sm bg-white/10 hover:bg-white/20 rounded transition-colors"
+          class="w-full px-4 py-2 font-mono text-sm bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
         >
           Project Details
         </button>
@@ -94,7 +94,7 @@ console.log('Best sitemap:', bestSiteMap);
   <!-- Project Details Modal -->
   <div id="project-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm hidden z-50">
     <div class="flex items-center justify-center h-full p-8">
-      <div class="bg-black border border-white/20 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
+      <div class="bg-black border border-white/20 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
         <!-- Modal Header -->
         <div class="border-b border-white/10 p-6">
           <div class="flex justify-between items-start">
@@ -137,7 +137,7 @@ console.log('Best sitemap:', bestSiteMap);
             <button 
               id="delete-project-btn"
               data-project-id={id}
-              class="px-6 py-2 font-mono text-sm bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded transition-colors"
+              class="px-6 py-2 font-mono text-sm bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded-lg transition-colors"
             >
               Delete Project
             </button>

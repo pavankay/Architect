@@ -190,15 +190,22 @@ export default function SiteMapViewer({ siteMap }: SiteMapViewerProps) {
       const boxWidth = 200;
       const boxHeight = 60;
       
-      // Draw box shadow
+      // Draw box shadow with rounded corners
       ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
-      ctx.fillRect(node.x - boxWidth/2 + 2, node.y - boxHeight/2 + 2, boxWidth, boxHeight);
+      ctx.beginPath();
+      ctx.roundRect(node.x - boxWidth/2 + 2, node.y - boxHeight/2 + 2, boxWidth, boxHeight, 12);
+      ctx.fill();
       
-      // Draw box
+      // Draw box with rounded corners
       ctx.fillStyle = '#000000';
-      ctx.fillRect(node.x - boxWidth/2, node.y - boxHeight/2, boxWidth, boxHeight);
+      ctx.beginPath();
+      ctx.roundRect(node.x - boxWidth/2, node.y - boxHeight/2, boxWidth, boxHeight, 12);
+      ctx.fill();
+      
       ctx.strokeStyle = '#ffffff';
-      ctx.strokeRect(node.x - boxWidth/2, node.y - boxHeight/2, boxWidth, boxHeight);
+      ctx.beginPath();
+      ctx.roundRect(node.x - boxWidth/2, node.y - boxHeight/2, boxWidth, boxHeight, 12);
+      ctx.stroke();
       
       // Draw text
       ctx.fillStyle = '#ffffff';
@@ -308,13 +315,13 @@ export default function SiteMapViewer({ siteMap }: SiteMapViewerProps) {
           onClick={() => setSelectedNode(null)}
         >
           <div 
-            className="bg-black border border-white/20 p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+            className="bg-black border border-white/20 p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto rounded-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-start mb-6">
               <div>
                 <h2 className="font-mono text-2xl text-white mb-2">{selectedNode.name}</h2>
-                <code className="text-white/60 font-mono text-sm bg-white/10 px-2 py-1 rounded">
+                <code className="text-white/60 font-mono text-sm bg-white/10 px-2 py-1 rounded-md">
                   {selectedNode.path}
                 </code>
               </div>

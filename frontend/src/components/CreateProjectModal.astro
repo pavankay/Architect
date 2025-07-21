@@ -13,7 +13,7 @@
           id="name"
           name="name"
           required
-          class="w-full p-3 border-b border-white/20 bg-transparent text-white font-mono focus:outline-none focus:border-white transition-colors"
+          class="w-full p-3 border border-white/20 bg-transparent text-white font-mono focus:outline-none focus:border-white transition-colors rounded-lg"
           placeholder="My Awesome Site"
         />
       </div>
@@ -28,7 +28,7 @@
           name="description"
           required
           rows="8"
-          class="w-full p-3 border-b border-white/20 bg-transparent text-white font-mono focus:outline-none focus:border-white transition-colors resize-none"
+          class="w-full p-3 border border-white/20 bg-transparent text-white font-mono focus:outline-none focus:border-white transition-colors resize-none rounded-lg"
           placeholder="Provide a comprehensive description of your project:
 
 • What type of website/app is this? (e.g., e-commerce, blog, SaaS, portfolio)
@@ -69,14 +69,14 @@ The more detail you provide, the better the AI can plan your architecture."
       <div class="flex gap-4 mt-6">
         <button
           type="submit"
-          class="flex-1 bg-white text-black py-3 font-mono hover:bg-opacity-90 transition-opacity"
+          class="flex-1 bg-white text-black py-3 font-mono hover:bg-opacity-90 transition-opacity rounded-lg"
         >
           Create
         </button>
         <button
           type="button"
           id="cancel-btn"
-          class="flex-1 border border-white py-3 font-mono hover:bg-white hover:text-black transition-all"
+          class="flex-1 border border-white py-3 font-mono hover:bg-white hover:text-black transition-all rounded-lg"
         >
           Cancel
         </button>
@@ -124,7 +124,7 @@ The more detail you provide, the better the AI can plan your architecture."
       </div>
       
       <div class="flex-1 overflow-hidden">
-        <div class="border border-white/10 rounded p-4 h-full overflow-y-auto">
+        <div class="border border-white/10 rounded-lg p-4 h-full overflow-y-auto">
           <h4 class="font-mono text-xs text-white/60 mb-3">AI Progress</h4>
           <div id="ai-callbacks" class="space-y-2 font-mono text-xs text-white/80">
             <!-- AI messages will be dynamically added here -->
@@ -157,6 +157,7 @@ The more detail you provide, the better the AI can plan your architecture."
     height: 80vh;
     max-height: 600px;
     border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
     display: flex;
     flex-direction: column;
     overflow: hidden;

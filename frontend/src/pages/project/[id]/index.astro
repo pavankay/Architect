@@ -31,16 +31,16 @@ if (!project) {
       </div>
       
       <nav class="space-y-2 flex-1">
-        <a href={`/project/${id}`} class="block px-4 py-2 font-mono text-sm bg-white/10 rounded">
+        <a href={`/project/${id}`} class="block px-4 py-2 font-mono text-sm bg-white/10 rounded-lg">
           Overview
         </a>
-        <a href={`/project/${id}/sitemap`} class="block px-4 py-2 font-mono text-sm hover:bg-white/5 rounded transition-colors">
+        <a href={`/project/${id}/sitemap`} class="block px-4 py-2 font-mono text-sm hover:bg-white/5 rounded-lg transition-colors">
           Site Map
         </a>
-        <a href={`/project/${id}/architecture`} class="block px-4 py-2 font-mono text-sm hover:bg-white/5 rounded transition-colors">
+        <a href={`/project/${id}/architecture`} class="block px-4 py-2 font-mono text-sm hover:bg-white/5 rounded-lg transition-colors">
           Frontend
         </a>
-        <a href={`/project/${id}/backend`} class="block px-4 py-2 font-mono text-sm hover:bg-white/5 rounded transition-colors">
+        <a href={`/project/${id}/backend`} class="block px-4 py-2 font-mono text-sm hover:bg-white/5 rounded-lg transition-colors">
           Backend
         </a>
       </nav>
@@ -48,7 +48,7 @@ if (!project) {
       <div class="mt-auto pt-8 space-y-4">
         <button 
           id="project-details-btn"
-          class="w-full px-4 py-2 font-mono text-sm bg-white/10 hover:bg-white/20 rounded transition-colors"
+          class="w-full px-4 py-2 font-mono text-sm bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
         >
           Project Details
         </button>
@@ -66,7 +66,7 @@ if (!project) {
         <h1 class="font-mono text-3xl mb-8">Project Overview</h1>
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="p-6 bg-white/5 rounded">
+          <div class="p-6 bg-white/5 rounded-xl border border-white/10 hover:border-white/20 transition-colors">
             <h3 class="font-mono text-lg mb-2">Site Map</h3>
             <p class="font-mono text-sm opacity-60 mb-4">Interactive site structure</p>
             <a href={`/project/${id}/sitemap`} class="font-mono text-sm text-white hover:underline">
@@ -74,7 +74,7 @@ if (!project) {
             </a>
           </div>
           
-          <div class="p-6 bg-white/5 rounded">
+          <div class="p-6 bg-white/5 rounded-xl border border-white/10 hover:border-white/20 transition-colors">
             <h3 class="font-mono text-lg mb-2">Frontend</h3>
             <p class="font-mono text-sm opacity-60 mb-4">UI components and architecture</p>
             <a href={`/project/${id}/architecture`} class="font-mono text-sm text-white hover:underline">
@@ -82,7 +82,7 @@ if (!project) {
             </a>
           </div>
           
-          <div class="p-6 bg-white/5 rounded">
+          <div class="p-6 bg-white/5 rounded-xl border border-white/10 hover:border-white/20 transition-colors">
             <h3 class="font-mono text-lg mb-2">Backend</h3>
             <p class="font-mono text-sm opacity-60 mb-4">API and database design</p>
             <a href={`/project/${id}/backend`} class="font-mono text-sm text-white hover:underline">
@@ -97,7 +97,7 @@ if (!project) {
   <!-- Project Details Modal -->
   <div id="project-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm hidden z-50">
     <div class="flex items-center justify-center h-full p-8">
-      <div class="bg-black border border-white/20 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
+      <div class="bg-black border border-white/20 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
         <!-- Modal Header -->
         <div class="border-b border-white/10 p-6">
           <div class="flex justify-between items-start">
@@ -140,7 +140,7 @@ if (!project) {
             <button 
               id="delete-project-btn"
               data-project-id={id}
-              class="px-6 py-2 font-mono text-sm bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded transition-colors"
+              class="px-6 py-2 font-mono text-sm bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded-lg transition-colors"
             >
               Delete Project
             </button>
