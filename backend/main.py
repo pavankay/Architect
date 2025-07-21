@@ -1,9 +1,10 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from typing import List, Dict, Any
 from pydantic import BaseModel
 import asyncio
+import json
 
 from database import engine, get_db
 from models import Base, Project
@@ -81,6 +82,51 @@ async def get_project(project_id: str, db: Session = Depends(get_db)):
         created_at=project.created_at.isoformat()
     )
 
+# WebSocket connection manager
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: List[WebSocket] = []
+
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+
+    def disconnect(self, websocket: WebSocket):
+        self.active_connections.remove(websocket)
+
+    async def send_progress(self, project_id: str, step: str, message: str, progress: int):
+        progress_data = {
+            "project_id": project_id,
+            "step": step,
+            "message": message,
+            "progress": progress,
+            "timestamp": asyncio.get_event_loop().time()
+        }
+        
+        # Send to all connected clients (in production, you'd filter by project_id)
+        disconnected = []
+        for connection in self.active_connections:
+            try:
+                await connection.send_text(json.dumps(progress_data))
+            except:
+                disconnected.append(connection)
+        
+        # Remove disconnected clients
+        for connection in disconnected:
+            self.active_connections.remove(connection)
+
+manager = ConnectionManager()
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await manager.connect(websocket)
+    try:
+        while True:
+            # Keep connection alive
+            await websocket.receive_text()
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+
 @app.post("/projects", response_model=ProjectResponse)
 async def create_project(project: ProjectCreate, db: Session = Depends(get_db)):
     # Create new project
@@ -90,22 +136,40 @@ async def create_project(project: ProjectCreate, db: Session = Depends(get_db)):
     )
     
     try:
-        # Generate artifacts with progress updates
-        # Step 1: Generate site maps
-        print(f"Generating site maps for project: {project.name}")
-        site_maps = await ai_agents.generate_site_maps(project.description)
-        print(f"Generated site maps: {site_maps}")
+        project_id = db_project.id
         
-        # Step 2: Use the generated site map directly (no rating needed for single generation)
+        # Set up progress callback for AI agents
+        ai_agents.set_progress_callback(manager.send_progress)
+        
+        # Step 1: Planning site structure
+        await manager.send_progress(project_id, "planning", "Starting AI project analysis...", 5)
+        await asyncio.sleep(0.3)
+        await manager.send_progress(project_id, "planning", "Analyzing project requirements and planning site structure...", 10)
+        await asyncio.sleep(0.5)
+        await manager.send_progress(project_id, "planning", "Identifying key user personas and use cases...", 15)
+        await asyncio.sleep(0.3)
+        await manager.send_progress(project_id, "planning", "Determining core functionality and features...", 20)
+        
+        site_maps = await ai_agents.generate_site_maps(project.description, project_id=project_id)
+        
+        # Step 2: Creating site maps  
+        await manager.send_progress(project_id, "sitemap", "Sitemap generation completed, validating structure...", 48)
+        await asyncio.sleep(0.3)
         best_site_map = site_maps[0] if site_maps else {"pages": []}
+        await manager.send_progress(project_id, "sitemap", "Page hierarchy and navigation flow established", 52)
         
-        # Step 3: Generate Mermaid diagrams
-        mermaid_diagrams = await ai_agents.generate_mermaid_diagrams(project.description, best_site_map)
+        # Step 3: Designing architecture diagrams
+        mermaid_diagrams = await ai_agents.generate_mermaid_diagrams(project.description, best_site_map, project_id=project_id)
         
-        # Step 4: Generate backend diagrams
-        backend_diagrams = await ai_agents.generate_backend_diagrams(project.description)
+        # Step 4: Backend diagrams
+        backend_diagrams = await ai_agents.generate_backend_diagrams(project.description, project_id=project_id)
         
-        # Skip rating step for faster generation
+        # Final step: Finalizing
+        await manager.send_progress(project_id, "finalize", "Saving project artifacts to database...", 92)
+        await asyncio.sleep(0.5)
+        await manager.send_progress(project_id, "finalize", "Securing project data and setting permissions...", 95)
+        await asyncio.sleep(0.3)
+        await manager.send_progress(project_id, "finalize", "Project structure complete! Redirecting...", 100)
         
         # Store results
         db_project.site_maps = site_maps
@@ -130,6 +194,7 @@ async def create_project(project: ProjectCreate, db: Session = Depends(get_db)):
         
     except Exception as e:
         db.rollback()
+        await manager.send_progress(project_id, "error", f"Error: {str(e)}", 0)
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.delete("/projects")

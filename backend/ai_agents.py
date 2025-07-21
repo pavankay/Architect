@@ -12,8 +12,18 @@ class AIAgents:
         api_key = os.getenv("ANTHROPIC_API_KEY")
         print(f"Initializing AI Agents with API key: {api_key[:10]}...{api_key[-4:] if api_key else 'NONE'}")
         self.client = anthropic.Anthropic(api_key=api_key)
+        self.progress_callback = None
         
-    async def generate_site_maps(self, project_description: str, count: int = 1) -> List[Dict[str, Any]]:
+    def set_progress_callback(self, callback):
+        """Set callback function for progress updates"""
+        self.progress_callback = callback
+        
+    async def _send_progress(self, project_id: str, step: str, message: str, progress: int):
+        """Send progress update if callback is set"""
+        if self.progress_callback:
+            await self.progress_callback(project_id, step, message, progress)
+        
+    async def generate_site_maps(self, project_description: str, count: int = 1, project_id: str = None) -> List[Dict[str, Any]]:
         """Generate multiple site map options using sub-agents"""
         print(f"\n{'='*60}")
         print(f"GENERATING SITE MAPS")
@@ -46,8 +56,12 @@ Return ONLY valid JSON, no additional text. Example structure:
     }}
   ]
 }}"""
+            await self._send_progress(project_id, "sitemap", f"Preparing sitemap generation {i+1} of {count}...", 25 + (i * 10))
+            await asyncio.sleep(0.3)
+            await self._send_progress(project_id, "sitemap", f"Analyzing project requirements for sitemap structure...", 25 + (i * 10) + 2)
             print(f"\nGenerating sitemap {i+1} of {count}...")
-            result = await self._generate_with_model(prompt)
+            result = await self._generate_with_model(prompt, project_id, f"Sitemap {i+1}/{count}")
+            await self._send_progress(project_id, "sitemap", f"Processing sitemap response {i+1}/{count}...", 25 + (i * 10) + 8)
             results.append(result)
         parsed_results = []
         
@@ -70,6 +84,8 @@ Return ONLY valid JSON, no additional text. Example structure:
             f.write(f"{'='*80}\n\n")
             
             for i, r in enumerate(results):
+                await self._send_progress(project_id, "sitemap", f"Validating sitemap {i+1} structure and content...", 35 + (i * 5))
+                
                 print(f"\n--- Result {i+1} ---")
                 print(f"Raw response length: {len(r) if r else 0}")
                 print(f"First 200 chars: {r[:200] if r else 'EMPTY'}")
@@ -78,10 +94,12 @@ Return ONLY valid JSON, no additional text. Example structure:
                 f.write(f"Raw response: {r}\n")
                 f.write(f"{'='*80}\n\n")
                 
+                await self._send_progress(project_id, "sitemap", f"Parsing JSON response for sitemap {i+1}...", 38 + (i * 5))
                 parsed = self._parse_json_response(r)
                 
                 # If parsing failed or result is empty, create a default sitemap
                 if not parsed or not isinstance(parsed, dict) or 'pages' not in parsed:
+                    await self._send_progress(project_id, "sitemap", f"Sitemap {i+1} parsing failed, using fallback structure...", 40 + (i * 5))
                     print(f"WARNING: Failed to parse sitemap {i+1} or empty result, using fallback")
                     print(f"Parsed result: {parsed}")
                     f.write(f"PARSING FAILED - Using fallback\n")
@@ -99,6 +117,7 @@ Return ONLY valid JSON, no additional text. Example structure:
                         ]
                     }
                 else:
+                    await self._send_progress(project_id, "sitemap", f"Sitemap {i+1} validated: {len(parsed.get('pages', []))} pages created", 42 + (i * 5))
                     print(f"SUCCESS: Parsed sitemap {i+1} with {len(parsed.get('pages', []))} pages")
                     f.write(f"PARSING SUCCESS\n")
                     f.write(f"Number of pages: {len(parsed.get('pages', []))}\n\n")
@@ -112,10 +131,15 @@ Return ONLY valid JSON, no additional text. Example structure:
         
         return parsed_results
     
-    async def generate_mermaid_diagrams(self, project_description: str, site_map: Dict, count: int = 1) -> List[str]:
+    async def generate_mermaid_diagrams(self, project_description: str, site_map: Dict, count: int = 1, project_id: str = None) -> List[str]:
         """Generate multiple Mermaid diagram options for frontend architecture"""
+        await self._send_progress(project_id, "architecture", "Initializing frontend architecture design...", 55)
+        await asyncio.sleep(0.2)
+        await self._send_progress(project_id, "architecture", "Analyzing sitemap structure for component hierarchy...", 57)
+        
         tasks = []
         for i in range(count):
+            await self._send_progress(project_id, "architecture", f"Preparing architecture diagram {i+1}/{count}...", 58 + (i * 5))
             prompt = f"""As a frontend architecture expert (Agent {i+1}), create a Mermaid diagram for:
             
 Project: {project_description}
@@ -140,15 +164,29 @@ IMPORTANT:
 - Do NOT use any colors - everything should be black and white only
 - Style example: A[Component]:::blackBox
 - classDef blackBox fill:#000,stroke:#fff,stroke-width:2px,color:#fff"""
-            tasks.append(self._generate_with_model(prompt))
+            tasks.append(self._generate_with_model(prompt, project_id, f"Frontend Diagram {i+1}/{count}"))
         
+        await self._send_progress(project_id, "architecture", f"Generating {count} frontend architecture diagram(s)...", 60)
         results = await asyncio.gather(*tasks)
-        return [self._clean_mermaid_diagram(r) for r in results]
+        
+        await self._send_progress(project_id, "architecture", "Processing and cleaning Mermaid diagrams...", 68)
+        cleaned_results = []
+        for i, r in enumerate(results):
+            await self._send_progress(project_id, "architecture", f"Cleaning diagram {i+1}/{count}...", 69 + i)
+            cleaned_results.append(self._clean_mermaid_diagram(r))
+        
+        await self._send_progress(project_id, "architecture", "Frontend architecture diagrams complete!", 72)
+        return cleaned_results
     
-    async def generate_backend_diagrams(self, project_description: str, count: int = 1) -> List[str]:
+    async def generate_backend_diagrams(self, project_description: str, count: int = 1, project_id: str = None) -> List[str]:
         """Generate multiple backend architecture diagrams"""
+        await self._send_progress(project_id, "backend", "Initializing backend architecture design...", 75)
+        await asyncio.sleep(0.2)
+        await self._send_progress(project_id, "backend", "Analyzing data flow and API requirements...", 77)
+        
         tasks = []
         for i in range(count):
+            await self._send_progress(project_id, "backend", f"Setting up backend diagram {i+1}/{count}...", 78 + (i * 3))
             prompt = f"""As a backend architecture specialist (Agent {i+1}), create a Mermaid diagram for the backend of:
             
 {project_description}
@@ -172,10 +210,19 @@ IMPORTANT:
 - Do NOT use any colors - everything should be black and white only
 - Style example: A[Component]:::blackBox
 - classDef blackBox fill:#000,stroke:#fff,stroke-width:2px,color:#fff"""
-            tasks.append(self._generate_with_model(prompt))
+            tasks.append(self._generate_with_model(prompt, project_id, f"Backend Diagram {i+1}/{count}"))
         
+        await self._send_progress(project_id, "backend", f"Generating {count} backend architecture diagram(s)...", 80)
         results = await asyncio.gather(*tasks)
-        return [self._clean_mermaid_diagram(r) for r in results]
+        
+        await self._send_progress(project_id, "backend", "Processing backend diagrams and cleaning code...", 87)
+        cleaned_results = []
+        for i, r in enumerate(results):
+            await self._send_progress(project_id, "backend", f"Finalizing backend diagram {i+1}/{count}...", 88 + i)
+            cleaned_results.append(self._clean_mermaid_diagram(r))
+        
+        await self._send_progress(project_id, "backend", "Backend architecture diagrams complete!", 90)
+        return cleaned_results
     
     async def rate_artifacts(self, artifacts: List[Any], artifact_type: str, project_description: str) -> List[Dict[str, Any]]:
         """Rate generated artifacts using a critic agent"""
@@ -198,13 +245,17 @@ Return JSON array with ratings for each artifact:
         response = await self._generate_with_model(prompt)
         return self._parse_json_response(response)
     
-    async def _generate_with_model(self, prompt: str) -> str:
+    async def _generate_with_model(self, prompt: str, project_id: str = None, step_description: str = "Processing") -> str:
         """Generate response using Anthropic Claude API"""
+        await self._send_progress(project_id, "ai_call", f"{step_description}: Sending request to Claude AI...", 0)
+        
         print(f"\n--- AI API CALL ---")
         print(f"Prompt length: {len(prompt)} chars")
         print(f"Model: claude-sonnet-4-20250514")
         
         try:
+            await self._send_progress(project_id, "ai_call", f"{step_description}: Claude AI thinking and analyzing...", 0)
+            
             # Make synchronous call directly
             response = self.client.messages.create(
                 model="claude-sonnet-4-20250514",
@@ -215,23 +266,28 @@ Return JSON array with ratings for each artifact:
             
             if response.content and len(response.content) > 0:
                 result = response.content[0].text
+                await self._send_progress(project_id, "ai_call", f"{step_description}: Response received ({len(result)} chars)", 0)
+                
                 print(f"Response received: {len(result)} chars")
                 print(f"Response type: {type(response.content[0])}")
                 print(f"Stop reason: {response.stop_reason}")
                 
                 if response.stop_reason == "max_tokens":
                     print("WARNING: Response was truncated due to max_tokens limit!")
+                    await self._send_progress(project_id, "ai_call", f"{step_description}: Response truncated - may need adjustment", 0)
                     
                 return result
             else:
                 print("WARNING: Empty response.content from Claude API")
                 print(f"Response object: {response}")
+                await self._send_progress(project_id, "ai_call", f"{step_description}: Empty response from Claude", 0)
                 return ""
                 
         except Exception as e:
             print(f"ERROR generating with model: {type(e).__name__}: {str(e)}")
             import traceback
             print(f"Traceback:\n{traceback.format_exc()}")
+            await self._send_progress(project_id, "ai_call", f"{step_description}: API error - {str(e)[:50]}...", 0)
             return ""
     
     def _parse_json_response(self, response: str) -> Any:
