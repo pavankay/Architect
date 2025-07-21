@@ -4,8 +4,17 @@
 <div id="create-modal" class="modal" style="display: none;">
   <div class="modal-content animate-scale-in">
     <div class="modal-header">
-      <h2 class="font-mono text-3xl mb-2">Create New Project</h2>
-      <p class="font-mono text-sm opacity-60 mb-6">Let AI help you architect the perfect solution</p>
+      <div>
+        <h2 class="font-mono text-3xl mb-2">Create New Project</h2>
+        <p class="font-mono text-sm opacity-60 mb-6">Let AI help you architect the perfect solution</p>
+      </div>
+      <button 
+        id="close-modal-btn"
+        type="button"
+        class="text-white/60 hover:text-white text-2xl font-mono leading-none transition-colors"
+      >
+        ×
+      </button>
     </div>
     
     <form id="create-form" class="space-y-8 flex-1 overflow-y-auto">
@@ -45,29 +54,6 @@ The more detail you provide, the better the AI can plan your architecture."
         ></textarea>
       </div>
       
-      <div class="grid grid-cols-2 gap-6">
-        <div>
-          <h3 class="font-mono text-sm mb-3 text-white">What we'll create:</h3>
-          <ul class="space-y-2 font-mono text-xs opacity-80">
-            <li>• Interactive site map</li>
-            <li>• Frontend architecture</li>
-            <li>• Backend design</li>
-            <li>• Component hierarchy</li>
-            <li>• API structure</li>
-          </ul>
-        </div>
-        
-        <div>
-          <h3 class="font-mono text-sm mb-3 text-white">AI Process:</h3>
-          <ul class="space-y-2 font-mono text-xs opacity-80">
-            <li>• Analyze requirements</li>
-            <li>• Plan site structure</li>
-            <li>• Design architecture</li>
-            <li>• Create diagrams</li>
-            <li>• Optimize design</li>
-          </ul>
-        </div>
-      </div>
       
       <div class="flex gap-4 mt-8">
         <button
@@ -90,29 +76,37 @@ The more detail you provide, the better the AI can plan your architecture."
       <div class="space-y-3 mb-6">
         <div class="step-item" data-step="1">
           <div class="flex items-center gap-3">
-            <div class="spinner"></div>
-            <div class="checkmark">●</div>
+            <div class="step-icon">
+              <div class="spinner"></div>
+              <div class="checkmark">●</div>
+            </div>
             <span class="font-mono text-xs">Planning site structure...</span>
           </div>
         </div>
         <div class="step-item" data-step="2">
           <div class="flex items-center gap-3">
-            <div class="spinner"></div>
-            <div class="checkmark">●</div>
+            <div class="step-icon">
+              <div class="spinner"></div>
+              <div class="checkmark">●</div>
+            </div>
             <span class="font-mono text-xs">Creating site maps...</span>
           </div>
         </div>
         <div class="step-item" data-step="3">
           <div class="flex items-center gap-3">
-            <div class="spinner"></div>
-            <div class="checkmark">●</div>
+            <div class="step-icon">
+              <div class="spinner"></div>
+              <div class="checkmark">●</div>
+            </div>
             <span class="font-mono text-xs">Designing architecture diagrams...</span>
           </div>
         </div>
         <div class="step-item" data-step="4">
           <div class="flex items-center gap-3">
-            <div class="spinner"></div>
-            <div class="checkmark">●</div>
+            <div class="step-icon">
+              <div class="spinner"></div>
+              <div class="checkmark">●</div>
+            </div>
             <span class="font-mono text-xs">Finalizing project structure...</span>
           </div>
         </div>
@@ -158,6 +152,13 @@ The more detail you provide, the better the AI can plan your architecture."
     overflow: hidden;
   }
 
+  .step-icon {
+    position: relative;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+
   .spinner {
     width: 16px;
     height: 16px;
@@ -165,6 +166,9 @@ The more detail you provide, the better the AI can plan your architecture."
     border-top-color: transparent;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
+    position: absolute;
+    top: 0;
+    left: 0;
   }
 
   .step-item {
@@ -185,25 +189,36 @@ The more detail you provide, the better the AI can plan your architecture."
   }
   
   .step-item .checkmark {
-    display: none;
+    color: transparent;
     width: 16px;
     height: 16px;
-    color: rgba(255, 255, 255, 0.1);
-    font-family: 'TG Frekuent Mono', monospace;
-    font-size: 16px;
-    line-height: 1;
     display: flex;
     align-items: center;
     justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
   }
   
   .step-item.completed .checkmark {
-    display: flex;
-    color: #10b981;
+    color: transparent;
+  }
+  
+  .step-item.completed .checkmark::before {
+    content: '';
+    width: 12px;
+    height: 12px;
+    background-color: #22c55e;
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+    position: absolute;
   }
 
   /* Enhanced form styles */
   .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     padding-bottom: 1.5rem;
     margin-bottom: 2rem;
@@ -263,6 +278,7 @@ The more detail you provide, the better the AI can plan your architecture."
   const form = document.getElementById('create-form') as HTMLFormElement;
   const loadingState = document.getElementById('loading-state');
   const cancelBtn = document.getElementById('cancel-btn');
+  const closeModalBtn = document.getElementById('close-modal-btn');
   
   // Show modal when create button is clicked
   document.addEventListener('click', (e) => {
@@ -272,9 +288,12 @@ The more detail you provide, the better the AI can plan your architecture."
   });
   
   // Hide modal
-  cancelBtn?.addEventListener('click', () => {
+  const hideModal = () => {
     modal!.style.display = 'none';
-  });
+  };
+  
+  cancelBtn?.addEventListener('click', hideModal);
+  closeModalBtn?.addEventListener('click', hideModal);
   
   // Handle form submission
   form?.addEventListener('submit', async (e) => {
