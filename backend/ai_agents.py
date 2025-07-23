@@ -1,6 +1,7 @@
 import asyncio
 from typing import List, Dict, Any
 import anthropic
+from openai import OpenAI
 import os
 from dotenv import load_dotenv
 import json
@@ -9,9 +10,26 @@ load_dotenv()
 
 class AIAgents:
     def __init__(self):
-        api_key = os.getenv("ANTHROPIC_API_KEY")
-        print(f"Initializing AI Agents with API key: {api_key[:10]}...{api_key[-4:] if api_key else 'NONE'}")
-        self.client = anthropic.Anthropic(api_key=api_key)
+        # Initialize OpenAI client (primary)
+        openai_key = os.getenv("OPENAI_API_KEY")
+        if openai_key:
+            print(f"Initializing AI Agents with OpenAI API key: {openai_key[:10]}...{openai_key[-4:]}")
+            self.openai_client = OpenAI(api_key=openai_key)
+            self.use_openai = True
+        else:
+            print("No OpenAI API key found, will use Anthropic only")
+            self.openai_client = None
+            self.use_openai = False
+        
+        # Initialize Anthropic client (fallback)
+        anthropic_key = os.getenv("ANTHROPIC_API_KEY")
+        if anthropic_key:
+            print(f"Initializing Anthropic fallback with API key: {anthropic_key[:10]}...{anthropic_key[-4:]}")
+            self.anthropic_client = anthropic.Anthropic(api_key=anthropic_key)
+        else:
+            print("No Anthropic API key found")
+            self.anthropic_client = None
+            
         self.progress_callback = None
         
     def set_progress_callback(self, callback):
@@ -33,9 +51,7 @@ class AIAgents:
         
         results = []
         for i in range(count):
-            prompt = f"""As a web architecture specialist, create a comprehensive site map for the following project:
-            
-{project_description}
+            system_prompt = """As a web architecture specialist, create a comprehensive site map for projects.
 
 Create a site map with 5-8 main pages. For each page include:
 - name (string)
@@ -45,21 +61,24 @@ Create a site map with 5-8 main pages. For each page include:
 - children (array, can be empty)
 
 Return ONLY valid JSON, no additional text. Example structure:
-{{
+{
   "pages": [
-    {{
+    {
       "name": "Home",
       "path": "/",
       "description": "Main landing page with product showcase.",
       "features": ["Hero section", "Featured products", "Newsletter signup"],
       "children": []
-    }}
+    }
   ]
-}}"""
+}"""
+            
+            user_prompt = f"Create a comprehensive site map for the following project:\n\n{project_description}"
             await self._send_progress(project_id, "sitemap", f"Preparing sitemap generation {i+1} of {count}...", 25 + (i * 10))
             await asyncio.sleep(0.3)
             await self._send_progress(project_id, "sitemap", f"Analyzing project requirements for sitemap structure...", 25 + (i * 10) + 2)
             print(f"\nGenerating sitemap {i+1} of {count}...")
+            prompt = f"{system_prompt}\n\n{user_prompt}"
             result = await self._generate_with_model(prompt, project_id, f"Sitemap {i+1}/{count}")
             await self._send_progress(project_id, "sitemap", f"Processing sitemap response {i+1}/{count}...", 25 + (i * 10) + 8)
             results.append(result)
@@ -193,7 +212,7 @@ IMPORTANT:
 
 Focus on: {"API design" if i == 0 else "database schema" if i == 1 else "microservices"}
 
-Create a VERTICAL (top-to-bottom) diagram with proper spacing.
+Create a HORIZONTAL (left-to-right) diagram with proper spacing.
 
 Return your response in this EXACT format:
 <MERMAID_START>
@@ -246,48 +265,104 @@ Return JSON array with ratings for each artifact:
         return self._parse_json_response(response)
     
     async def _generate_with_model(self, prompt: str, project_id: str = None, step_description: str = "Processing") -> str:
-        """Generate response using Anthropic Claude API"""
-        await self._send_progress(project_id, "ai_call", f"{step_description}: Sending request to Claude AI...", 0)
+        """Generate response using OpenAI GPT (primary) or Anthropic Claude (fallback)"""
         
-        print(f"\n--- AI API CALL ---")
-        print(f"Prompt length: {len(prompt)} chars")
-        print(f"Model: claude-sonnet-4-20250514")
-        
-        try:
-            await self._send_progress(project_id, "ai_call", f"{step_description}: Claude AI thinking and analyzing...", 0)
-            
-            # Make synchronous call directly
-            response = self.client.messages.create(
-                model="claude-sonnet-4-20250514",
-                max_tokens=10000,  # Increased to handle even larger JSON responses
-                temperature=0.7,
-                messages=[{"role": "user", "content": prompt}]
-            )
-            
-            if response.content and len(response.content) > 0:
-                result = response.content[0].text
-                await self._send_progress(project_id, "ai_call", f"{step_description}: Response received ({len(result)} chars)", 0)
+        # Try OpenAI first if available
+        if self.use_openai and self.openai_client:
+            try:
+                await self._send_progress(project_id, "ai_call", f"{step_description}: Sending request to OpenAI GPT-4...", 0)
                 
-                print(f"Response received: {len(result)} chars")
-                print(f"Response type: {type(response.content[0])}")
-                print(f"Stop reason: {response.stop_reason}")
+                print(f"\n--- OPENAI API CALL ---")
+                print(f"Full prompt length: {len(prompt)} chars")
+                print(f"Model: gpt-4.1")
                 
-                if response.stop_reason == "max_tokens":
-                    print("WARNING: Response was truncated due to max_tokens limit!")
-                    await self._send_progress(project_id, "ai_call", f"{step_description}: Response truncated - may need adjustment", 0)
-                    
+                # Split prompt into instructions (system) and input (user) for OpenAI
+                # Look for system-style prompts that start with "As a..."
+                if prompt.startswith("As a"):
+                    lines = prompt.split('\n\n', 1)
+                    if len(lines) > 1:
+                        instructions = lines[0]  # System prompt part
+                        input_text = lines[1]    # User content part
+                    else:
+                        instructions = "You are a helpful AI assistant."
+                        input_text = prompt
+                else:
+                    instructions = "You are a helpful AI assistant."
+                    input_text = prompt
+                
+                print(f"Instructions: {instructions[:100]}...")
+                print(f"Input: {input_text[:100]}...")
+                
+                await self._send_progress(project_id, "ai_call", f"{step_description}: OpenAI GPT-4.1 thinking and analyzing...", 0)
+                
+                # Use OpenAI's responses API format as requested
+                response = self.openai_client.responses.create(
+                    model="gpt-4.1",
+                    instructions=instructions,
+                    input=input_text,
+                    max_output_tokens=20000,
+                )
+                
+                result = response.output_text
+                await self._send_progress(project_id, "ai_call", f"{step_description}: OpenAI response received ({len(result)} chars)", 0)
+                
+                print(f"OpenAI response received: {len(result)} chars")
+                print(f"Response type: {type(result)}")
+                
                 return result
-            else:
-                print("WARNING: Empty response.content from Claude API")
-                print(f"Response object: {response}")
-                await self._send_progress(project_id, "ai_call", f"{step_description}: Empty response from Claude", 0)
-                return ""
                 
-        except Exception as e:
-            print(f"ERROR generating with model: {type(e).__name__}: {str(e)}")
-            import traceback
-            print(f"Traceback:\n{traceback.format_exc()}")
-            await self._send_progress(project_id, "ai_call", f"{step_description}: API error - {str(e)[:50]}...", 0)
+            except Exception as e:
+                print(f"ERROR with OpenAI API: {type(e).__name__}: {str(e)}")
+                print("Falling back to Anthropic Claude...")
+                await self._send_progress(project_id, "ai_call", f"{step_description}: OpenAI failed, trying Anthropic...", 0)
+        
+        # Fallback to Anthropic Claude
+        if self.anthropic_client:
+            try:
+                await self._send_progress(project_id, "ai_call", f"{step_description}: Sending request to Claude AI...", 0)
+                
+                print(f"\n--- ANTHROPIC API CALL (FALLBACK) ---")
+                print(f"Prompt length: {len(prompt)} chars")
+                print(f"Model: claude-sonnet-4-20250514")
+                
+                await self._send_progress(project_id, "ai_call", f"{step_description}: Claude AI thinking and analyzing...", 0)
+                
+                # Make synchronous call directly
+                response = self.anthropic_client.messages.create(
+                    model="claude-sonnet-4-20250514",
+                    max_tokens=10000,  # Increased to handle even larger JSON responses
+                    temperature=0.7,
+                    messages=[{"role": "user", "content": prompt}]
+                )
+                
+                if response.content and len(response.content) > 0:
+                    result = response.content[0].text
+                    await self._send_progress(project_id, "ai_call", f"{step_description}: Claude response received ({len(result)} chars)", 0)
+                    
+                    print(f"Claude response received: {len(result)} chars")
+                    print(f"Response type: {type(response.content[0])}")
+                    print(f"Stop reason: {response.stop_reason}")
+                    
+                    if response.stop_reason == "max_tokens":
+                        print("WARNING: Response was truncated due to max_tokens limit!")
+                        await self._send_progress(project_id, "ai_call", f"{step_description}: Response truncated - may need adjustment", 0)
+                        
+                    return result
+                else:
+                    print("WARNING: Empty response.content from Claude API")
+                    print(f"Response object: {response}")
+                    await self._send_progress(project_id, "ai_call", f"{step_description}: Empty response from Claude", 0)
+                    return ""
+                    
+            except Exception as e:
+                print(f"ERROR generating with Anthropic model: {type(e).__name__}: {str(e)}")
+                import traceback
+                print(f"Traceback:\n{traceback.format_exc()}")
+                await self._send_progress(project_id, "ai_call", f"{step_description}: Both APIs failed - {str(e)[:50]}...", 0)
+                return ""
+        else:
+            print("ERROR: No AI clients available!")
+            await self._send_progress(project_id, "ai_call", f"{step_description}: No AI clients configured", 0)
             return ""
     
     def _parse_json_response(self, response: str) -> Any:
