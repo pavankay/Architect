@@ -3,11 +3,12 @@ import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import logo from '../assets/sitebuilder.png';
+import { API_BASE_URL } from '../config.ts';
 
 // Fetch projects from API
 let projects = [];
 try {
-  const response = await fetch('http://localhost:5000/projects');
+  const response = await fetch(`${API_BASE_URL}/projects`);
   projects = response.ok ? await response.json() : [];
 } catch (error) {
   console.error('Failed to fetch projects:', error);
@@ -33,9 +34,9 @@ try {
         </div>
         <a
           href="/create"
-          class="bg-[var(--color-white)] text-[var(--color-black)] px-8 py-4 font-mono transition-opacity rounded-lg inline-block hover:opacity-90"
+          class="bg-[var(--color-white)] text-[var(--color-black)] px-6 py-3 font-mono text-sm transition-opacity rounded-md inline-block hover:opacity-90"
         >
-          <span class="text-lg">+</span> Create Project
+          <span class="text-base">+</span> Create Project
         </a>
       </div>
 
@@ -53,19 +54,19 @@ try {
           ))}
         </div>
       ) : (
-        <div class="text-center py-24 animate-fade-in animate-delay-300">
-          <div class="inline-block p-8 border border-white/10 rounded-2xl bg-white/[0.02]">
-            <div class="text-6xl mb-6 opacity-20 font-mono">[ ]</div>
-            <h3 class="font-mono text-xl mb-4">No projects yet</h3>
-            <p class="font-mono text-sm opacity-60 mb-6 max-w-md mx-auto leading-relaxed">
+        <div class="text-center py-8 animate-fade-in animate-delay-300">
+          <div class="inline-block p-4 border border-white/10 rounded-lg bg-white/[0.02]">
+            <div class="text-2xl mb-3 opacity-20 font-mono">[ ]</div>
+            <h3 class="font-mono text-base mb-2">No projects yet</h3>
+            <p class="font-mono text-xs opacity-60 mb-3 max-w-xs mx-auto leading-relaxed">
               Get started by creating your first project. Our AI will help you plan the perfect architecture.
             </p>
-            <button
-              onclick="document.getElementById('create-project-btn').click()"
-              class="bg-white/10 border border-white/20 text-white px-6 py-3 font-mono transition-colors rounded-lg"
+            <a
+              href="/create"
+              class="bg-white/10 border border-white/20 text-white px-3 py-1.5 text-xs font-mono transition-colors rounded-md inline-block hover:bg-white/20"
             >
               Create Your First Project
-            </button>
+            </a>
           </div>
         </div>
       )}
@@ -90,7 +91,7 @@ try {
       }
       
       try {
-        const response = await fetch('http://localhost:5000/projects', {
+        const response = await fetch(`${API_BASE_URL}/projects`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',

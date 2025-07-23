@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
 import logo from '../assets/sitebuilder.png';
+import { API_BASE_URL } from '../config.ts';
 ---
 
 <Layout title="Create Project - Architect">
@@ -22,14 +23,14 @@ import logo from '../assets/sitebuilder.png';
     </header>
 
     <div class="max-w-4xl mx-auto animate-fade-in animate-delay-200">
-      <div class="mb-12">
-        <h2 class="font-antikor-title text-4xl mb-4">Create New Project</h2>
-        <p class="font-mono text-lg opacity-60">Let AI help you architect the perfect solution</p>
+      <div class="mb-8">
+        <h2 class="font-antikor-title text-3xl mb-3">Create New Project</h2>
+        <p class="font-mono text-base opacity-60">Let AI help you architect the perfect solution</p>
       </div>
 
       <!-- Form Container -->
-      <div class="bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-3xl p-8 backdrop-blur-sm">
-        <form id="create-form" class="space-y-8">
+      <div class="bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-2xl p-6 backdrop-blur-sm">
+        <form id="create-form" class="space-y-6">
           <!-- Project Name -->
           <div class="form-group">
             <label for="name" class="block font-mono text-sm mb-3 text-[var(--text-primary)]">Project Name</label>
@@ -38,7 +39,7 @@ import logo from '../assets/sitebuilder.png';
               id="name"
               name="name"
               required
-              class="w-full px-6 py-4 bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-xl font-mono text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:border-[var(--border-primary)] focus:outline-none transition-colors"
+              class="w-full px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-lg font-mono text-sm text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:border-[var(--border-primary)] focus:outline-none transition-colors"
               placeholder="My Awesome Site"
             />
           </div>
@@ -53,8 +54,8 @@ import logo from '../assets/sitebuilder.png';
               id="description"
               name="description"
               required
-              rows="20"
-              class="w-full px-6 py-4 bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-xl font-mono text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:border-[var(--border-primary)] focus:outline-none transition-colors resize-y min-h-[400px] leading-relaxed"
+              rows="12"
+              class="w-full px-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-lg font-mono text-sm text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:border-[var(--border-primary)] focus:outline-none transition-colors resize-y min-h-[300px] leading-relaxed"
               placeholder="Provide a comprehensive description of your project:
 
 • What type of website/app is this? (e.g., e-commerce, blog, SaaS, portfolio)
@@ -78,16 +79,16 @@ Examples:
           </div>
           
           <!-- Action Buttons -->
-          <div class="flex gap-4 pt-4">
+          <div class="flex gap-3 pt-3">
             <button
               type="submit"
-              class="flex-1 bg-[var(--color-white)] text-[var(--color-black)] py-4 px-8 font-mono font-medium rounded-xl hover:opacity-90 transition-opacity"
+              class="flex-1 bg-[var(--color-white)] text-[var(--color-black)] py-3 px-6 font-mono font-medium text-sm rounded-lg hover:opacity-90 transition-opacity"
             >
               Create Project
             </button>
             <a
               href="/"
-              class="flex-1 border border-[var(--border-primary)] py-4 px-8 font-mono text-center rounded-xl hover:border-[var(--text-primary)] transition-colors"
+              class="flex-1 border border-[var(--border-primary)] py-3 px-6 font-mono text-sm text-center rounded-lg hover:border-[var(--text-primary)] transition-colors"
             >
               Cancel
             </a>

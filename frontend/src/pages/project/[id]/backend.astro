@@ -1,4 +1,5 @@
 ---
+import { API_BASE_URL } from "../../../config.ts";
 import Layout from '../../../layouts/Layout.astro';
 
 const { id } = Astro.params;
@@ -6,7 +7,7 @@ const { id } = Astro.params;
 // Fetch project details
 let project = null;
 try {
-  const response = await fetch(`http://localhost:5000/projects/${id}`);
+  const response = await fetch(`${API_BASE_URL}/projects/${id}`);
   project = response.ok ? await response.json() : null;
 } catch (error) {
   console.error('Failed to fetch project:', error);
@@ -184,7 +185,7 @@ const bestDiagram = project.backend_diagrams[bestBackendIndex] || project.backen
       
       if (confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
         try {
-          const response = await fetch(`http://localhost:5000/projects/${projectId}`, {
+          const response = await fetch(`http://localhost:8000/projects/${projectId}`, {
             method: 'DELETE',
           });
           
