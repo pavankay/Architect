@@ -1,7 +1,6 @@
 ---
 import { API_BASE_URL } from "../../../config.ts";
 import Layout from '../../../layouts/Layout.astro';
-import Breadcrumb from '../../../components/Breadcrumb.astro';
 
 const { id } = Astro.params;
 
@@ -19,7 +18,7 @@ if (!project) {
 }
 ---
 
-<Layout title={`${project.name} - Architect`}>
+<Layout title={`Code - ${project.name}`}>
   <div class="flex h-screen">
     <!-- Sidebar -->
     <aside class="w-64 bg-[var(--bg-primary)] border-r border-[var(--border-primary)] p-6 flex flex-col">
@@ -34,7 +33,7 @@ if (!project) {
       </div>
       
       <nav class="space-y-1 flex-1">
-        <a href={`/project/${id}`} class="nav-item nav-active">
+        <a href={`/project/${id}`} class="nav-item">
           <span>Overview</span>
         </a>
         <a href={`/project/${id}/sitemap`} class="nav-item">
@@ -47,7 +46,7 @@ if (!project) {
           <span>Backend</span>
         </a>
         <div class="border-t border-white/10 pt-4 mt-6">
-          <a href={`/project/${id}/code`} class="nav-item w-full text-left">
+          <a href={`/project/${id}/code`} class="nav-item nav-active w-full text-left">
             <span>Code</span>
           </a>
         </div>
@@ -69,80 +68,47 @@ if (!project) {
     </aside>
     
     <!-- Main Content -->
-    <main class="flex-1 p-8 overflow-auto bg-pattern-dots">
-      <div class="max-w-4xl mx-auto animate-fade-in">
-        <Breadcrumb items={[
-          { label: "Home", href: "/" },
-          { label: "Projects", href: "/" },
-          { label: project.name, href: `/project/${id}` },
-          { label: "Overview" }
-        ]} />
-        
-        <div class="mb-12">
-          <h1 class="font-antikor-title text-4xl mb-3">Project Overview</h1>
-          <p class="font-mono text-sm opacity-60">Explore your project's architecture and structure</p>
-        </div>
-        
-        <div class="relative">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
-            <a href={`/project/${id}/sitemap`} class="overview-card animate-scale-in" id="sitemap-card">
-              <h3 class="font-antikor-title text-xl mb-3">Site Map</h3>
-              <p class="font-mono text-sm opacity-60 mb-6 leading-relaxed">Interactive site structure and page hierarchy visualization</p>
-              <div class="card-action">
-                <span class="font-mono text-sm">Explore Site Map</span>
-                <span class="action-arrow">→</span>
+    <main class="flex-1 flex flex-col bg-black">
+      <!-- Code Header -->
+      <div class="border-b border-white/20 p-8">
+        <h1 class="font-antikor-title text-3xl mb-2">CODE</h1>
+        <p class="font-mono text-sm opacity-60">AI Assistant for {project.name}</p>
+      </div>
+      
+      <!-- Chat Messages -->
+      <div class="flex-1 overflow-hidden">
+        <div id="chat-messages" class="h-full overflow-y-auto">
+          <div class="max-w-4xl mx-auto py-8">
+            <!-- Initial AI Message -->
+            <div class="mb-8">
+              <div class="flex items-start gap-4 px-8">
+                <img src="/sitebuilder.png" alt="Architect Logo" class="w-8 h-8 object-contain" />
+                <div class="flex-1">
+                  <div class="font-mono text-sm leading-relaxed">
+                    Hello! I'm your AI assistant for "{project.name}". I can help you understand your project architecture, suggest improvements, answer questions about your site maps, frontend components, and backend design. What would you like to explore?
+                  </div>
+                </div>
               </div>
-            </a>
-            
-            <a href={`/project/${id}/architecture`} class="overview-card animate-scale-in animate-delay-100" id="frontend-card">
-              <h3 class="font-antikor-title text-xl mb-3">Frontend</h3>
-              <p class="font-mono text-sm opacity-60 mb-6 leading-relaxed">UI components hierarchy and data flow architecture</p>
-              <div class="card-action">
-                <span class="font-mono text-sm">View Frontend</span>
-                <span class="action-arrow">→</span>
-              </div>
-            </a>
-            
-            <a href={`/project/${id}/backend`} class="overview-card animate-scale-in animate-delay-200" id="backend-card">
-              <h3 class="font-antikor-title text-xl mb-3">Backend</h3>
-              <p class="font-mono text-sm opacity-60 mb-6 leading-relaxed">API design and database schema visualization</p>
-              <div class="card-action">
-                <span class="font-mono text-sm">View Backend</span>
-                <span class="action-arrow">→</span>
-              </div>
-            </a>
+            </div>
           </div>
-          
-          <!-- Connecting Lines -->
-          <svg class="absolute top-0 left-0 w-full h-full pointer-events-none" style="z-index: 1;" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <!-- L-shaped lines connecting cards to LET HIM COOK button -->
-            
-            <!-- Left card (Site Map) connection -->
-            <path d="M 16.66 62 L 16.66 77 L 47 77 L 47 82" 
-                  stroke="white" 
-                  stroke-width="0.5" 
-                  fill="none" />
-            
-            <!-- Center card (Frontend) connection -->
-            <path d="M 50 62 L 50 82" 
-                  stroke="white" 
-                  stroke-width="0.5" 
-                  fill="none" />
-            
-            <!-- Right card (Backend) connection -->
-            <path d="M 83.33 62 L 83.33 77 L 53 77 L 53 82" 
-                  stroke="white" 
-                  stroke-width="0.5" 
-                  fill="none" />
-          </svg>
-          
-          <!-- LET HIM COOK Button -->
-          <div class="flex justify-center">
+        </div>
+      </div>
+      
+      <!-- Chat Input -->
+      <div class="border-t border-white/20 bg-black">
+        <div class="max-w-4xl mx-auto p-8">
+          <div class="flex gap-4">
+            <input
+              type="text"
+              id="chat-input"
+              placeholder="Message AI assistant..."
+              class="flex-1 px-4 py-3 bg-white/5 border border-white/20 rounded-lg font-mono text-sm text-white placeholder-white/60 focus:border-white/40 focus:outline-none transition-colors"
+            />
             <button
-              id="let-him-cook-btn"
-              class="font-antikor-title px-12 py-6 text-2xl bg-white text-black border border-white rounded-lg transition-all duration-300 hover:bg-white/90 relative z-10"
+              id="send-chat-btn"
+              class="px-6 py-3 bg-white text-black rounded-lg font-mono text-sm font-medium transition-colors hover:bg-white/90"
             >
-              COOK
+              Send
             </button>
           </div>
         </div>
@@ -205,7 +171,6 @@ if (!project) {
       </div>
     </div>
   </div>
-
 </Layout>
 
 <script>
@@ -214,27 +179,27 @@ if (!project) {
     const projectDetailsBtn = document.getElementById('project-details-btn');
     const projectModal = document.getElementById('project-modal');
     const closeModalBtn = document.getElementById('close-modal-btn');
-    
-    const letHimCookBtn = document.getElementById('let-him-cook-btn');
-    
+    const chatInput = document.getElementById('chat-input');
+    const sendChatBtn = document.getElementById('send-chat-btn');
+    const chatMessages = document.getElementById('chat-messages');
+
     // Open modal
     projectDetailsBtn?.addEventListener('click', () => {
       projectModal?.classList.remove('hidden');
     });
 
-    
     // Close modal
     closeModalBtn?.addEventListener('click', () => {
       projectModal?.classList.add('hidden');
     });
-    
+
     // Close modal when clicking outside
     projectModal?.addEventListener('click', (e) => {
       if (e.target === projectModal) {
         projectModal.classList.add('hidden');
       }
     });
-    
+
     // Delete project
     deleteBtn?.addEventListener('click', async (e) => {
       const projectId = (e.target as HTMLElement).dataset.projectId;
@@ -258,9 +223,61 @@ if (!project) {
       }
     });
 
-    // COOK button redirects to code page
-    letHimCookBtn?.addEventListener('click', () => {
-      window.location.href = `/project/${window.location.pathname.split('/')[2]}/code`;
+    // Send message function
+    function sendMessage() {
+      const message = chatInput?.value.trim();
+      if (!message) return;
+
+      // Get the messages container
+      const messagesContainer = chatMessages?.querySelector('.max-w-4xl');
+      if (!messagesContainer) return;
+
+      // Add user message
+      const userMessageDiv = document.createElement('div');
+      userMessageDiv.className = 'mb-8';
+      userMessageDiv.innerHTML = `
+        <div class="flex items-start gap-4 px-8">
+          <div class="w-8 h-8 bg-white/10 border border-white/20 rounded-full flex items-center justify-center font-mono text-xs">
+            You
+          </div>
+          <div class="flex-1">
+            <div class="font-mono text-sm leading-relaxed">${message}</div>
+          </div>
+        </div>
+      `;
+      
+      messagesContainer.appendChild(userMessageDiv);
+      chatInput.value = '';
+
+      // Add AI response (mock for now)
+      setTimeout(() => {
+        const aiMessageDiv = document.createElement('div');
+        aiMessageDiv.className = 'mb-8';
+        aiMessageDiv.innerHTML = `
+          <div class="flex items-start gap-4 px-8">
+            <img src="/sitebuilder.png" alt="Architect Logo" class="w-8 h-8 object-contain" />
+            <div class="flex-1">
+              <div class="font-mono text-sm leading-relaxed">Great question! I'm currently a frontend-only demo, but in a full implementation, I would analyze your project architecture, suggest improvements, and help you understand the relationships between your site maps, frontend components, and backend design. I could help you optimize your project structure and identify potential issues or enhancements.</div>
+            </div>
+          </div>
+        `;
+        
+        messagesContainer.appendChild(aiMessageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }, 1000);
+
+      // Auto scroll to bottom
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Send message on button click
+    sendChatBtn?.addEventListener('click', sendMessage);
+
+    // Send message on Enter key
+    chatInput?.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        sendMessage();
+      }
     });
   });
 </script>
@@ -292,40 +309,4 @@ if (!project) {
     color: white;
     border-color: rgba(255, 255, 255, 0.2);
   }
-
-
-  /* Enhanced overview cards */
-  .overview-card {
-    display: block;
-    padding: 2rem;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 1rem;
-    text-decoration: none;
-    color: inherit;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .overview-card:focus {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.2);
-  }
-
-
-  .card-action {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: auto;
-  }
-
-  .action-arrow {
-    font-family: 'TG Frekuent Mono', monospace;
-    opacity: 0.5;
-    transition: all 0.3s ease;
-    transform: translateX(0);
-  }
-
 </style>

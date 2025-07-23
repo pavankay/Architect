@@ -56,6 +56,11 @@ const bestDiagram = project.backend_diagrams[bestBackendIndex] || project.backen
         <a href={`/project/${id}/backend`} class="nav-item nav-active">
           <span>Backend</span>
         </a>
+        <div class="border-t border-white/10 pt-4 mt-6">
+          <a href={`/project/${id}/code`} class="nav-item w-full text-left">
+            <span>Code</span>
+          </a>
+        </div>
       </nav>
       
       <div class="mt-auto pt-12 space-y-4">
@@ -77,8 +82,8 @@ const bestDiagram = project.backend_diagrams[bestBackendIndex] || project.backen
     <main class="flex-1 overflow-hidden">
       <div class="w-full h-full relative bg-black">
         <div class="absolute top-0 left-0 right-0 p-8 z-10">
-          <h1 class="font-mono text-3xl mb-2">Backend Architecture</h1>
-          <p class="font-mono text-sm opacity-60">API design and database schema</p>
+          <h1 class="font-antikor-title text-3xl mb-2">Backend</h1>
+          <p class="font-mono text-sm opacity-60">API design and database schema visualization</p>
         </div>
         
         <div class="w-full h-full pt-24 relative">
@@ -152,6 +157,7 @@ const bestDiagram = project.backend_diagrams[bestBackendIndex] || project.backen
       </div>
     </div>
   </div>
+
 </Layout>
 
 <script>
@@ -162,10 +168,12 @@ const bestDiagram = project.backend_diagrams[bestBackendIndex] || project.backen
     const projectModal = document.getElementById('project-modal');
     const closeModalBtn = document.getElementById('close-modal-btn');
     
+    
     // Open modal
     projectDetailsBtn?.addEventListener('click', () => {
       projectModal?.classList.remove('hidden');
     });
+
     
     // Close modal
     closeModalBtn?.addEventListener('click', () => {
@@ -201,6 +209,7 @@ const bestDiagram = project.backend_diagrams[bestBackendIndex] || project.backen
         }
       }
     });
+
   });
 </script>
 

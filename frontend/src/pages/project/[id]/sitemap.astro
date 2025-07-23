@@ -62,6 +62,11 @@ console.log('Best sitemap:', bestSiteMap);
         <a href={`/project/${id}/backend`} class="nav-item">
           <span>Backend</span>
         </a>
+        <div class="border-t border-white/10 pt-4 mt-6">
+          <a href={`/project/${id}/code`} class="nav-item w-full text-left">
+            <span>Code</span>
+          </a>
+        </div>
       </nav>
       
       <div class="mt-auto pt-12 space-y-4">
@@ -80,36 +85,37 @@ console.log('Best sitemap:', bestSiteMap);
     </aside>
     
     <!-- Main Content -->
-    <main class="flex-1 overflow-hidden bg-pattern-dots">
-      <div class="p-6 bg-black border-b border-white/10">
-        <Breadcrumb items={[
-          { label: "Home", href: "/" },
-          { label: "Projects", href: "/" },
-          { label: project.name, href: `/project/${id}` },
-          { label: "Site Map" }
-        ]} />
-      </div>
+    <main class="flex-1 overflow-hidden">
+      <div class="w-full h-full relative bg-black">
+        <div class="absolute top-0 left-0 right-0 p-8 z-10">
+          <h1 class="font-antikor-title text-3xl mb-2">Site Map</h1>
+          <p class="font-mono text-sm opacity-60">Interactive site structure and page hierarchy</p>
+        </div>
       
-      {bestSiteMap ? (
-        <div class="h-full">
-          <SiteMapViewer siteMap={bestSiteMap} client:load />
-        </div>
-      ) : (
-        <div class="flex items-center justify-center h-full">
-          <div class="text-center animate-fade-in">
-            <div class="loading-spinner mx-auto mb-6"></div>
-            <p class="font-mono text-lg mb-4">Generating site map<span class="loading-dots"></span></p>
-            <p class="font-mono text-sm opacity-60 max-w-md mx-auto leading-relaxed">
-              Our AI is analyzing your project structure and creating an interactive visualization. This may take a few moments.
-            </p>
-            <div class="mt-8 space-y-4">
-              <div class="skeleton h-4 w-64 mx-auto rounded"></div>
-              <div class="skeleton h-4 w-48 mx-auto rounded"></div>
-              <div class="skeleton h-4 w-56 mx-auto rounded"></div>
+        
+        <div class="w-full h-full pt-24 relative">
+          {bestSiteMap ? (
+            <div class="h-full">
+              <SiteMapViewer siteMap={bestSiteMap} client:load />
             </div>
-          </div>
+          ) : (
+            <div class="flex items-center justify-center h-full">
+              <div class="text-center animate-fade-in">
+                <div class="loading-spinner mx-auto mb-6"></div>
+                <p class="font-mono text-lg mb-4">Generating site map<span class="loading-dots"></span></p>
+                <p class="font-mono text-sm opacity-60 max-w-md mx-auto leading-relaxed">
+                  Our AI is analyzing your project structure and creating an interactive visualization. This may take a few moments.
+                </p>
+                <div class="mt-8 space-y-4">
+                  <div class="skeleton h-4 w-64 mx-auto rounded"></div>
+                  <div class="skeleton h-4 w-48 mx-auto rounded"></div>
+                  <div class="skeleton h-4 w-56 mx-auto rounded"></div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </main>
   </div>
   
@@ -168,6 +174,7 @@ console.log('Best sitemap:', bestSiteMap);
       </div>
     </div>
   </div>
+
 </Layout>
 
 <script>
@@ -177,10 +184,12 @@ console.log('Best sitemap:', bestSiteMap);
     const projectModal = document.getElementById('project-modal');
     const closeModalBtn = document.getElementById('close-modal-btn');
     
+    
     // Open modal
     projectDetailsBtn?.addEventListener('click', () => {
       projectModal?.classList.remove('hidden');
     });
+
     
     // Close modal
     closeModalBtn?.addEventListener('click', () => {
@@ -216,6 +225,7 @@ console.log('Best sitemap:', bestSiteMap);
         }
       }
     });
+
   });
 </script>
 
